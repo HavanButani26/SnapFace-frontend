@@ -1,0 +1,84 @@
+<sf-auth-layout>
+    <div class="sf-auth-card sf-auth-card--wide">
+
+        <h1 class="sf-auth-card__title">Create your account</h1>
+        <p class="sf-auth-card__subtitle">Join SnapFace and start delivering photos instantly</p>
+
+        @if (errorMessage()) {
+        <p-message severity="error" [text]="errorMessage()!" styleClass="w-full sf-auth-card__message" />
+        }
+        @if (successMessage()) {
+        <p-message severity="success" [text]="successMessage()!" styleClass="w-full sf-auth-card__message" />
+        }
+
+        <sf-google-signin-button [role]="'photographer'" (success)="onGoogleSuccess($event)"
+            (error)="onGoogleError($event)" />
+
+        <div class="sf-auth-card__divider"><span>or</span></div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="sf-auth-card__form" novalidate>
+
+            <div class="sf-field">
+                <label for="reg-username">Username</label>
+                <input pInputText id="reg-username" type="text" formControlName="username" placeholder="yourname"
+                    autocomplete="username" />
+                @if (username.invalid && username.touched) {
+                <small class="sf-field__error">
+                    @if (username.errors?.['required']) { Username is required. }
+                    @if (username.errors?.['minlength']) { Username must be at least 3 characters. }
+                </small>
+                }
+            </div>
+
+            <div class="sf-field">
+                <label for="reg-email">Email</label>
+                <input pInputText id="reg-email" type="email" formControlName="email" placeholder="you@example.com"
+                    autocomplete="email" />
+                @if (email.invalid && email.touched) {
+                <small class="sf-field__error">
+                    @if (email.errors?.['required']) { Email is required. }
+                    @if (email.errors?.['email']) { Enter a valid email address. }
+                </small>
+                }
+            </div>
+
+            <div class="sf-field">
+                <label for="reg-password">Password</label>
+                <p-password id="reg-password" formControlName="password" [toggleMask]="true"
+                    placeholder="At least 8 characters" styleClass="w-full" autocomplete="new-password" />
+                @if (password.invalid && password.touched) {
+                <small class="sf-field__error">
+                    @if (password.errors?.['required']) { Password is required. }
+                    @if (password.errors?.['minlength']) { Password must be at least 8 characters. }
+                </small>
+                }
+            </div>
+
+            <div class="sf-field">
+                <label for="reg-password2">Confirm password</label>
+                <p-password id="reg-password2" formControlName="password2" [feedback]="false" [toggleMask]="true"
+                    placeholder="Re-enter your password" styleClass="w-full" autocomplete="new-password" />
+                @if (form.errors?.['mismatch'] && password2.touched) {
+                <small class="sf-field__error">Passwords do not match.</small>
+                }
+            </div>
+
+            <label class="sf-auth-card__terms">
+                <p-checkbox formControlName="agreeTerms" [binary]="true" />
+                <span>I agree to the <a routerLink="/terms">Terms of Service</a> and <a routerLink="/privacy">Privacy
+                        Policy</a></span>
+            </label>
+            @if (agreeTerms.invalid && agreeTerms.touched) {
+            <small class="sf-field__error">You must agree to continue.</small>
+            }
+
+            <p-button label="Create Account" type="submit" [loading]="loading()" styleClass="sf-full-btn"
+                size="large" />
+        </form>
+
+        <p class="sf-auth-card__footer">
+            Already have an account? <a routerLink="/login">Log in</a>
+        </p>
+
+    </div>
+</sf-auth-layout>

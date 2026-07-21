@@ -1,0 +1,35 @@
+<section class="sf-section sf-testimonials">
+    <div class="sf-container">
+
+        <div class="sf-testimonials__header">
+            <span class="sf-testimonials__eyebrow">Loved by Photographers &amp; Guests</span>
+            <h2 class="sf-testimonials__title">What people are saying</h2>
+        </div>
+
+        <p-carousel [value]="testimonials" [numVisible]="1" [numScroll]="1" [circular]="true" [autoplayInterval]="6000"
+            [showIndicators]="true" [showNavigators]="true" [responsiveOptions]="responsiveOptions"
+            styleClass="sf-testimonials__carousel">
+
+            <ng-template let-item #item>
+                <div class="sf-card sf-testimonial-card">
+                    <i class="pi pi-comment sf-testimonial-card__quote-icon"></i>
+                    <p class="sf-testimonial-card__quote">{{ item.quote }}</p>
+                    <div class="sf-testimonial-card__stars">
+                        @for (s of [1,2,3,4,5]; track s) {
+                        <i class="pi pi-star-fill"></i>
+                        }
+                    </div>
+                    <div class="sf-testimonial-card__author">
+                        <div class="sf-testimonial-card__avatar">{{ item.initials }}</div>
+                        <div>
+                            <div class="sf-testimonial-card__name">{{ item.name }}</div>
+                            <div class="sf-testimonial-card__role">{{ item.role }}</div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+        </p-carousel>
+
+    </div>
+</section>

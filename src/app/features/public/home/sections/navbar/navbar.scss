@@ -1,0 +1,224 @@
+.sf-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: var(--sf-navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &--scrolled {
+        border-bottom-color: var(--sf-navbar-border);
+    }
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 72px;
+        gap: var(--sf-space-md);
+    }
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    &__logo-img {
+        width: 200px;
+        height: auto;
+        display: block;
+        margin-top: 1.5rem;
+    }
+
+    &__links {
+        display: none;
+        align-items: center;
+        gap: var(--sf-space-md);
+        flex: 1;
+        justify-content: center;
+    }
+
+    &__link {
+        position: relative;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--sf-text-muted);
+        white-space: nowrap;
+        transition: color 0.15s ease;
+        padding-block: 0.35rem;
+
+        &:hover {
+            color: var(--sf-text);
+        }
+
+        &--active {
+            color: var(--sf-cyan);
+            font-weight: 600;
+
+            // Small underline indicator so it's unambiguous which link is active
+            &::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -2px;
+                height: 2px;
+                border-radius: 2px;
+                background: var(--sf-gradient);
+            }
+        }
+    }
+
+    &__actions {
+        display: none;
+        align-items: center;
+        gap: var(--sf-space-sm);
+        flex-shrink: 0;
+    }
+
+    &__login-link {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--sf-text);
+        padding-inline: 0.5rem;
+        white-space: nowrap;
+
+        &:hover {
+            color: var(--sf-cyan);
+        }
+    }
+
+    &__theme-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--sf-card-border);
+        background: transparent;
+        color: var(--sf-text-muted);
+        cursor: pointer;
+        transition: color 0.15s ease, border-color 0.15s ease;
+
+        i {
+            font-size: 1.1rem;
+        }
+
+        &:hover {
+            color: var(--sf-cyan);
+            border-color: var(--sf-cyan);
+        }
+
+        &--mobile {
+            width: 100%;
+            border-radius: var(--sf-radius-sm);
+            justify-content: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            height: auto;
+        }
+    }
+
+    &__hamburger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        color: var(--sf-text);
+        cursor: pointer;
+
+        i {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+// Tablet and up: show desktop actions, hide hamburger
+@media (min-width: 1024px) {
+    .sf-navbar {
+        &__links {
+            display: flex;
+        }
+
+        &__actions {
+            display: flex;
+        }
+
+        &__hamburger {
+            display: none;
+        }
+    }
+}
+
+.sf-mobile-drawer {
+    &__links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding-block: var(--sf-space-sm);
+    }
+
+    &__link {
+        padding: 0.875rem 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--sf-text);
+        border-radius: var(--sf-radius-sm);
+        border-left: 3px solid transparent;
+
+        &:hover {
+            background-color: var(--sf-bg-alt);
+            color: var(--sf-cyan);
+        }
+
+        &--active {
+            color: var(--sf-cyan);
+            font-weight: 600;
+            background-color: var(--sf-bg-alt);
+            border-left-color: var(--sf-cyan);
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: var(--sf-space-md);
+        padding-top: var(--sf-space-md);
+        border-top: 1px solid var(--sf-card-border);
+    }
+
+    &__login-link {
+        text-align: center;
+        padding: 0.75rem;
+        font-weight: 600;
+        border: 1px solid var(--sf-card-border);
+        border-radius: var(--sf-radius-sm);
+        color: var(--sf-text);
+
+        &:hover {
+            border-color: var(--sf-cyan);
+            color: var(--sf-cyan);
+        }
+    }
+}
+
+// Same fix as login/register: this project has no Tailwind, so
+// styleClass="w-full" on PrimeNG buttons does nothing on its own.
+::ng-deep .sf-full-btn {
+    display: block;
+    width: 100%;
+
+    .p-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

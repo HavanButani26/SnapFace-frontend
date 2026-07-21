@@ -1,0 +1,67 @@
+<div class="sf-dashboard">
+
+    <h1>Welcome back, {{ authService.currentUser()?.username }}</h1>
+
+    @if (loading()) {
+    <p class="sf-dashboard__loading">Loading your usage...</p>
+    } @else if (usage(); as u) {
+
+    @if (worstWarningLevel() !== 'normal') {
+    <div class="sf-dashboard__banner" [class]="'sf-dashboard__banner--' + worstWarningLevel()">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>
+            @if (worstWarningLevel() === 'blocked') {
+            You've reached a plan limit — new uploads or events are paused until you upgrade or free up space. Your
+            existing content is completely safe.
+            } @else if (worstWarningLevel() === 'urgent') {
+            You're almost at a plan limit — consider upgrading soon to avoid interruptions.
+            } @else {
+            You're getting close to a plan limit.
+            }
+        </span>
+        <a routerLink="/dashboard/settings" class="sf-dashboard__banner-link">Manage Plan</a>
+    </div>
+    }
+
+    <div class="sf-dashboard__plan-row">
+        <span>Current plan: <strong>{{ u.plan?.name || 'No plan' }}</strong></span>
+        @if (u.status === 'trialing') {
+        <span class="sf-dashboard__trial-badge">
+            @if (u.trial_days_remaining !== null && u.trial_days_remaining <= 0) { Trial ends today } @else { {{
+                u.trial_days_remaining }} day{{ u.trial_days_remaining===1 ? '' : 's' }} left in trial } </span>
+                <a routerLink="/pricing" class="sf-dashboard__trial-link">Choose a plan</a>
+                }
+    </div>
+
+    <div class="sf-card sf-dashboard__usage-card">
+        <h3>Your Usage</h3>
+        <div class="sf-dashboard__usage-grid">
+            <sf-usage-bar label="Storage" [used]="u.storage.used" [limit]="u.storage.limit"
+                [percent]="u.storage.percent" unit="GB" />
+            <sf-usage-bar label="Events This Period" [used]="u.events.used" [limit]="u.events.limit"
+                [percent]="u.events.percent" unit="" />
+            <sf-usage-bar label="AI Jobs This Period" [used]="u.ai_jobs.used" [limit]="u.ai_jobs.limit"
+                [percent]="u.ai_jobs.percent" unit="" />
+            <sf-usage-bar label="Reel Exports This Period" [used]="u.reel_exports.used" [limit]="u.reel_exports.limit"
+                [percent]="u.reel_exports.percent" unit="" />
+        </div>
+    </div>
+
+    <div class="sf-dashboard__quick-links">
+        <a routerLink="/dashboard/events" class="sf-card sf-dashboard__quick-link">
+            <i class="pi pi-calendar"></i>
+            <span>Manage Events</span>
+        </a>
+        <a routerLink="/dashboard/analytics" class="sf-card sf-dashboard__quick-link">
+            <i class="pi pi-chart-bar"></i>
+            <span>View Analytics</span>
+        </a>
+        <a routerLink="/dashboard/settings" class="sf-card sf-dashboard__quick-link">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    }
+
+</div>

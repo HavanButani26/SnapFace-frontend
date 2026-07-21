@@ -1,0 +1,31 @@
+<section class="sf-section sf-how" id="how-it-works">
+    <div class="sf-container">
+
+        <div class="sf-how__header">
+            <span class="sf-how__eyebrow">How It Works</span>
+            <h2 class="sf-how__title">Simple. Fast. <span class="sf-gradient-text">Magical.</span></h2>
+        </div>
+
+        <div class="sf-how__steps">
+            @for (step of steps; track step.number; let last = $last) {
+            <div class="sf-how__step">
+                <div class="sf-how__step-top">
+                    <div class="sf-how__badge">{{ step.number }}</div>
+                    @if (!last) {
+                    <div class="sf-how__connector" aria-hidden="true"></div>
+                    }
+                </div>
+
+                <div class="sf-card sf-how__card">
+                    <div class="sf-how__icon">
+                        <i class="pi" [ngClass]="step.icon"></i>
+                    </div>
+                    <h3 class="sf-how__step-title">{{ step.title }}</h3>
+                    <p class="sf-how__step-desc">{{ step.description }}</p>
+                </div>
+            </div>
+            }
+        </div>
+
+    </div>
+</section>

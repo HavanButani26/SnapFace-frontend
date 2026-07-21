@@ -1,0 +1,43 @@
+<div class="sf-auth">
+    <div class="sf-auth__bg" aria-hidden="true"></div>
+
+    <div class="sf-auth__content">
+
+        <!-- Brand side: visible desktop only, sits directly on the animated scene -->
+        <div class="sf-auth__brand-side">
+            <a routerLink="/" class="sf-auth__brand">
+                <img src="assets/logos/logo-dark.svg" alt="SnapFace" class="sf-auth__logo-img" />
+            </a>
+
+            <div class="sf-auth__brand-content">
+                <h2 class="sf-auth__brand-title">Every Face. Every Moment. Found Instantly.</h2>
+                <p class="sf-auth__brand-subtitle">
+                    Join thousands of photographers and guests already using SnapFace.
+                </p>
+
+                <ul class="sf-auth__highlights">
+                    @for (h of highlights; track h.text) {
+                    <li>
+                        <i class="pi" [class]="'pi ' + h.icon"></i>
+                        <span>{{ h.text }}</span>
+                    </li>
+                    }
+                </ul>
+            </div>
+
+            <span class="sf-auth__brand-footer">&copy; {{ currentYear }} SnapFace</span>
+        </div>
+
+        <!-- Form side: mobile brand row + the floating glass card -->
+        <div class="sf-auth__form-side">
+            <a routerLink="/" class="sf-auth__mobile-brand">
+                <img src="assets/logos/logo-dark.svg" alt="SnapFace" class="sf-auth__logo-img" />
+            </a>
+
+            <div class="sf-auth__form-card">
+                <ng-content></ng-content>
+            </div>
+        </div>
+
+    </div>
+</div>

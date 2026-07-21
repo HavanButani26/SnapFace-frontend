@@ -1,0 +1,375 @@
+.sf-shell {
+    display: flex;
+    min-height: 100dvh;
+    background-color: transparent;
+}
+
+// ------------------------------------------------------------------
+// Sidebar (desktop) — glass panel
+// ------------------------------------------------------------------
+.sf-shell__sidebar {
+    display: none;
+    flex-direction: column;
+    width: 240px;
+    flex-shrink: 0;
+    background-color: var(--sf-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--sf-card-border);
+    padding: var(--sf-space-md) var(--sf-space-sm);
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+}
+
+.sf-shell__brand {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.5rem 1.25rem;
+}
+
+.sf-shell__logo-img {
+    width: 100%;
+    height: auto;
+}
+
+.sf-shell__logo-img--drawer {
+    width: auto;
+    height: 40px;
+    max-width: 160px;
+}
+
+.sf-shell__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+.sf-shell__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: var(--sf-radius-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--sf-text-muted);
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    i {
+        font-size: 1rem;
+        width: 18px;
+        text-align: center;
+    }
+
+    &:hover {
+        background-color: var(--sf-bg-alt);
+        color: var(--sf-text);
+    }
+
+    &--active {
+        background: var(--sf-gradient);
+        color: #ffffff;
+        font-weight: 600;
+    }
+}
+
+.sf-shell__theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: var(--sf-radius-sm);
+    border: 1px solid var(--sf-card-border);
+    background: transparent;
+    color: var(--sf-text-muted);
+    font-size: 0.875rem;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: var(--sf-space-sm);
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    i {
+        font-size: 1rem;
+    }
+
+    &:hover {
+        color: var(--sf-cyan);
+        border-color: var(--sf-cyan);
+    }
+}
+
+// ------------------------------------------------------------------
+// Main column
+// ------------------------------------------------------------------
+.sf-shell__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sf-shell__topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-sm);
+    height: 64px;
+    padding-inline: var(--sf-space-md);
+    background-color: var(--sf-navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--sf-navbar-border);
+}
+
+.sf-shell__topbar-spacer {
+    flex: 1;
+}
+
+.sf-shell__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: transparent;
+    color: var(--sf-text);
+    cursor: pointer;
+
+    i {
+        font-size: 1.3rem;
+    }
+}
+
+.sf-shell__icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--sf-card-border);
+    background: transparent;
+    color: var(--sf-text-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        color: var(--sf-cyan);
+        border-color: var(--sf-cyan);
+    }
+}
+
+.sf-shell__user-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid var(--sf-card-border);
+    background: transparent;
+    color: var(--sf-text);
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+        border-color: var(--sf-cyan);
+    }
+
+    i {
+        font-size: 0.7rem;
+        color: var(--sf-text-muted);
+    }
+}
+
+.sf-shell__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--sf-gradient);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.sf-shell__username {
+    font-size: 0.875rem;
+    font-weight: 600;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @media (max-width: 480px) {
+        display: none;
+    }
+}
+
+.sf-shell__content {
+    flex: 1;
+    padding: var(--sf-space-md);
+}
+
+@media (min-width: 1024px) {
+    .sf-shell__sidebar {
+        display: flex;
+    }
+
+    .sf-shell__hamburger {
+        display: none;
+    }
+
+    .sf-shell__content {
+        padding: var(--sf-space-lg);
+    }
+}
+
+// ------------------------------------------------------------------
+// Mobile drawer panel
+// ------------------------------------------------------------------
+::ng-deep .sf-shell-drawer {
+    background: var(--sf-card-bg) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--sf-card-border);
+
+    &.p-drawer,
+    .p-drawer {
+        background: var(--sf-card-bg) !important;
+    }
+
+    .p-drawer-header {
+        padding: var(--sf-space-md) var(--sf-space-sm) var(--sf-space-sm);
+    }
+
+    .p-drawer-content {
+        padding-inline: var(--sf-space-sm);
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+// ------------------------------------------------------------------
+// Custom user dropdown — plain HTML/CSS we fully control, no
+// third-party overlay component involved. This guarantees identical,
+// correct behavior at every viewport width.
+// ------------------------------------------------------------------
+.sf-user-dropdown {
+    position: relative;
+}
+
+.sf-user-dropdown__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 200;
+    min-width: 210px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.4rem;
+
+    background: var(--sf-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--sf-card-border);
+    border-radius: var(--sf-radius-md);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+
+    animation: sf-dropdown-in 0.15s ease-out;
+}
+
+@keyframes sf-dropdown-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sf-user-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: none;
+    border-radius: var(--sf-radius-sm);
+    background: transparent;
+    color: var(--sf-text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    i {
+        font-size: 0.9rem;
+        color: var(--sf-text-muted);
+        width: 16px;
+        transition: color 0.15s ease;
+    }
+
+    &:hover {
+        background: var(--sf-gradient);
+        color: #ffffff;
+
+        i {
+            color: #ffffff;
+        }
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &--danger:hover {
+        background: #ef4444;
+    }
+}
+
+.sf-user-dropdown__separator {
+    height: 1px;
+    background: var(--sf-card-border);
+    margin-block: 0.35rem;
+}
+
+// Invisible full-screen layer that closes the dropdown on outside click.
+// IMPORTANT: this must be LOWER than .sf-shell__topbar's z-index (100),
+// not higher. The dropdown panel's z-index:200 only wins WITHIN
+// topbar's own local stacking context (topbar itself has z-index:100,
+// which creates that context) — it can't "escape" to outrank a sibling
+// of topbar's parent. A backdrop z-index higher than topbar's silently
+// swallowed every click meant for the menu items underneath it.
+.sf-dropdown-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: transparent;
+}

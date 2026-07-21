@@ -1,0 +1,21 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+:host ::ng-deep svg {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
+/* "Snap" — follows the active theme's text color so it stays visible on both */
+:host ::ng-deep .sf-logo__text {
+  fill: var(--sf-text);
+  transition: fill 0.2s ease;
+}
+
+/* "Face" — fixed brand purple, same in both themes */
+:host ::ng-deep .sf-logo__face {
+  fill: #6b55ff;
+}

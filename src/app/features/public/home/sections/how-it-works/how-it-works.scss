@@ -1,0 +1,123 @@
+.sf-how {
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: var(--sf-space-xl);
+    }
+
+    &__eyebrow {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--sf-cyan);
+    }
+
+    &__title {
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    &__steps {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--sf-space-lg);
+    }
+
+    &__step {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__step-top {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    &__badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--sf-gradient);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        flex-shrink: 0;
+    }
+
+    &__connector {
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, var(--sf-cyan), var(--sf-purple));
+        opacity: 0.35;
+    }
+
+    &__card {
+        padding: var(--sf-space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        flex: 1;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: var(--sf-radius-sm);
+        background: rgba(0, 212, 255, 0.12);
+        color: var(--sf-cyan);
+        margin-bottom: 0.5rem;
+
+        i {
+            font-size: 1.375rem;
+        }
+    }
+
+    &__step-title {
+        font-size: 1.0625rem;
+    }
+
+    &__step-desc {
+        font-size: 0.9375rem;
+        line-height: 1.55;
+    }
+}
+
+// ------------------------------------------------------------------
+// Tablet and up: horizontal row with connectors between badges
+// ------------------------------------------------------------------
+@media (min-width: 768px) {
+    .sf-how__steps {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--sf-space-md);
+    }
+
+    .sf-how__connector {
+        display: block;
+    }
+
+    .sf-how__title {
+        font-size: 2.25rem;
+    }
+}
+
+// On mobile, hide connectors (stacked cards don't need a horizontal line)
+@media (max-width: 767px) {
+    .sf-how__connector {
+        display: none;
+    }
+
+    .sf-how__step-top {
+        margin-bottom: 0.75rem;
+    }
+}

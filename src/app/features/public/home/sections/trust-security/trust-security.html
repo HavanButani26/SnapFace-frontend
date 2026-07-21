@@ -1,0 +1,27 @@
+<!--
+  Per the mockup, this section always shows on a light background,
+  even when the rest of the site is in dark mode — the .sf-trust
+  class supplies its own fixed (non-token) colors below rather than
+  using the theme-aware --sf-bg variables.
+-->
+<section class="sf-trust">
+    <div class="sf-container">
+
+        <div class="sf-trust__header">
+            <h2 class="sf-trust__title">Built for <span class="sf-trust__title-accent">Trust &amp; Security</span></h2>
+            <p class="sf-trust__subtitle">Your photos and data are private, secure and never shared.</p>
+        </div>
+
+        <div class="sf-trust__grid">
+            @for (item of items; track item.label) {
+            <div class="sf-trust__item">
+                <div class="sf-trust__icon">
+                    <i class="pi" [ngClass]="item.icon"></i>
+                </div>
+                <span>{{ item.label }}</span>
+            </div>
+            }
+        </div>
+
+    </div>
+</section>

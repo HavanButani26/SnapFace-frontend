@@ -1,0 +1,130 @@
+.sf-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-space-md);
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.sf-dashboard__loading {
+    color: var(--sf-text-muted);
+}
+
+.sf-dashboard__banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--sf-radius-sm);
+    font-size: 0.875rem;
+
+    i {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    span {
+        flex: 1;
+    }
+
+    &--warning {
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        color: #f59e0b;
+    }
+
+    &--urgent,
+    &--blocked {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.35);
+        color: #ef4444;
+    }
+}
+
+.sf-dashboard__banner-link {
+    flex-shrink: 0;
+    font-weight: 700;
+    text-decoration: underline;
+    color: inherit;
+}
+
+.sf-dashboard__plan-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--sf-text-muted);
+
+    strong {
+        color: var(--sf-text);
+    }
+}
+
+.sf-dashboard__trial-badge {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: var(--sf-gradient);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.sf-dashboard__trial-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--sf-cyan);
+    text-decoration: underline;
+}
+
+.sf-dashboard__usage-card {
+    padding: var(--sf-space-lg);
+
+    h3 {
+        font-size: 1rem;
+        margin-bottom: 1.1rem;
+    }
+}
+
+.sf-dashboard__usage-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 800px) {
+    .sf-dashboard__usage-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.sf-dashboard__quick-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sf-space-md);
+}
+
+.sf-dashboard__quick-link {
+    padding: var(--sf-space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--sf-text);
+    text-align: center;
+
+    i {
+        font-size: 1.5rem;
+        color: var(--sf-cyan);
+    }
+
+    span {
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    &:hover i {
+        color: #7B3FF2;
+    }
+}

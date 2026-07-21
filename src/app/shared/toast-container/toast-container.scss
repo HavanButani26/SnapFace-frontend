@@ -1,0 +1,98 @@
+.sf-toast-stack {
+    position: fixed;
+    bottom: var(--sf-space-md);
+    right: var(--sf-space-md);
+    z-index: 5000; // above everything, including the confirm dialog's own overlay
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: min(360px, calc(100vw - 2 * var(--sf-space-md)));
+}
+
+.sf-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    background: var(--sf-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--sf-card-border);
+    border-left: 3px solid var(--sf-cyan);
+    border-radius: var(--sf-radius-sm);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    color: var(--sf-text);
+    font-size: 0.875rem;
+    animation: sf-toast-in 0.2s ease-out;
+
+    >i:first-child {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    span {
+        flex: 1;
+    }
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        color: var(--sf-text-subtle);
+        cursor: pointer;
+        padding: 0.2rem;
+        flex-shrink: 0;
+
+        &:hover {
+            color: var(--sf-text);
+        }
+
+        i {
+            font-size: 0.75rem;
+        }
+    }
+
+    &--success {
+        border-left-color: #22c55e;
+
+        >i:first-child {
+            color: #22c55e;
+        }
+    }
+
+    &--error {
+        border-left-color: #ef4444;
+
+        >i:first-child {
+            color: #ef4444;
+        }
+    }
+
+    &--info {
+        border-left-color: var(--sf-cyan);
+
+        >i:first-child {
+            color: var(--sf-cyan);
+        }
+    }
+}
+
+@keyframes sf-toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sf-toast {
+        animation: none;
+    }
+}

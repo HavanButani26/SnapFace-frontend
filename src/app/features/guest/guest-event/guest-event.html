@@ -1,0 +1,153 @@
+<div class="sf-guest">
+
+    @switch (state()) {
+
+    @case ('loading') {
+    <div class="sf-guest__center">
+        <i class="pi pi-spin pi-spinner sf-guest__spinner"></i>
+    </div>
+    }
+
+    @case ('error') {
+    <div class="sf-guest__center">
+        <i class="pi pi-exclamation-circle sf-guest__error-icon"></i>
+        <h2>Event not found</h2>
+        <p>{{ errorMessage() }}</p>
+    </div>
+    }
+
+    @default {
+    @if (event(); as ev) {
+
+    <div class="sf-guest__hero" [style.background-image]="ev.cover_photo ? 'url(' + ev.cover_photo + ')' : ''">
+        <div class="sf-guest__hero-overlay"></div>
+        <div class="sf-guest__hero-content">
+            <h1>{{ ev.name }}</h1>
+            <p><i class="pi pi-calendar"></i> {{ ev.event_date | date:'mediumDate' }} @if (ev.venue) { &middot; {{
+                ev.venue }} }</p>
+        </div>
+    </div>
+
+    <div class="sf-guest__body">
+
+        @if (state() === 'password') {
+        <div class="sf-guest-card">
+            <i class="pi pi-lock sf-guest-card__icon"></i>
+            <h2>This event is password protected</h2>
+            <p>Ask your photographer for the password to view photos.</p>
+
+            <input type="password" class="sf-guest-card__input" placeholder="Enter password" [value]="passwordInput()"
+                (input)="passwordInput.set($any($event.target).value)" (keydown.enter)="submitPassword()" />
+
+            @if (passwordError()) {
+            <small class="sf-guest-card__error">{{ passwordError() }}</small>
+            }
+
+            <button type="button" class="sf-guest-card__btn" [disabled]="verifying()" (click)="submitPassword()">
+                {{ verifying() ? 'Checking...' : 'Continue' }}
+            </button>
+        </div>
+        }
+
+        @if (state() === 'ready') {
+
+        @if (searching()) {
+        <div class="sf-guest-card sf-guest-card--center">
+            <i class="pi pi-spin pi-spinner sf-guest-card__icon"></i>
+            <h2>Searching for your photos...</h2>
+            <p>This usually takes just a few seconds.</p>
+        </div>
+
+        } @else if (searchDone()) {
+        <div class="sf-guest-results">
+            <div class="sf-guest-results__header">
+                <h2>{{ results().length }} photo(s) found</h2>
+                <div class="sf-guest-results__actions">
+                    @if (results().length > 0) {
+                    <button type="button" class="sf-guest-card__btn-outline" [disabled]="downloadingZip()"
+                        (click)="downloadAll()">
+                        <i class="pi" [class.pi-download]="!downloadingZip()" [class.pi-spin]="downloadingZip()"
+                            [class.pi-spinner]="downloadingZip()"></i>
+                        {{ downloadingZip() ? 'Preparing ZIP...' : 'Download All' }}
+                    </button>
+                    }
+                    <button type="button" class="sf-guest-card__btn-outline" (click)="clearSelfie()">Search
+                        Again</button>
+                </div>
+            </div>
+
+            @if (searchError()) {
+            <p class="sf-guest-results__empty">{{ searchError() }}</p>
+            } @else if (results().length === 0) {
+            <p class="sf-guest-results__empty">
+                We couldn't find you in any photos yet. The photographer may still be uploading — check back later!
+            </p>
+            } @else {
+            <div class="sf-guest-photo-grid">
+                @for (photo of results(); track photo.id) {
+                <div class="sf-guest-photo-grid__item">
+                    <img [src]="photo.thumbnail_url || photo.image_url" [alt]="photo.original_filename"
+                        loading="lazy" />
+                    <button type="button" class="sf-guest-photo-grid__download"
+                        [disabled]="downloadingPhotoId() === photo.id" (click)="downloadOne(photo)"
+                        aria-label="Download">
+                        <i class="pi" [class.pi-download]="downloadingPhotoId() !== photo.id"
+                            [class.pi-spin]="downloadingPhotoId() === photo.id"
+                            [class.pi-spinner]="downloadingPhotoId() === photo.id"></i>
+                    </button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        } @else if (cameraActive()) {
+        <div class="sf-guest-card">
+            <h2>Take a Selfie</h2>
+            <video #videoEl autoplay playsinline muted class="sf-guest-card__video"></video>
+            <div class="sf-guest-card__preview-actions">
+                <button type="button" class="sf-guest-card__btn-outline" (click)="closeCamera()">Cancel</button>
+                <button type="button" class="sf-guest-card__btn" (click)="capturePhoto(videoEl)">
+                    <i class="pi pi-camera"></i> Capture
+                </button>
+            </div>
+        </div>
+
+        } @else {
+        <div class="sf-guest-card">
+            <i class="pi pi-camera sf-guest-card__icon"></i>
+            <h2>Find Your Photos</h2>
+            <p>Take a selfie or upload one and we'll find every photo you're in.</p>
+
+            @if (!selfiePreviewUrl()) {
+            <div class="sf-guest-card__option-row">
+                <button type="button" class="sf-guest-card__btn" (click)="openCamera()">
+                    <i class="pi pi-camera"></i> Use Camera
+                </button>
+                <label class="sf-guest-card__btn-outline sf-guest-card__upload-label">
+                    <i class="pi pi-upload"></i> Upload Photo
+                    <input type="file" accept="image/*" (change)="onSelfieSelected($event)" />
+                </label>
+            </div>
+            @if (cameraError()) {
+            <small class="sf-guest-card__error">{{ cameraError() }}</small>
+            }
+            } @else {
+            <img [src]="selfiePreviewUrl()!" alt="Your selfie" class="sf-guest-card__preview" />
+            <div class="sf-guest-card__preview-actions">
+                <button type="button" class="sf-guest-card__btn-outline" (click)="clearSelfie()">Retake</button>
+                <button type="button" class="sf-guest-card__btn" (click)="findMyPhotos()">Find My Photos</button>
+            </div>
+            }
+        </div>
+        }
+
+        }
+
+    </div>
+    }
+    }
+
+    }
+
+</div>

@@ -1,0 +1,103 @@
+<div class="sf-settings">
+
+    <h1>Settings</h1>
+
+    <!-- Profile -->
+    <section class="sf-card sf-settings__section">
+        <h2>Profile</h2>
+
+        <div class="sf-settings__avatar-row">
+            <div class="sf-settings__avatar">
+                @if (authService.currentUser()?.profile_photo) {
+                <img [src]="authService.currentUser()!.profile_photo" alt="Profile photo" />
+                } @else {
+                <span>{{ userInitials }}</span>
+                }
+            </div>
+            <button type="button" class="sf-settings__avatar-btn" (click)="avatarPickerOpen.set(true)">
+                Change Photo
+            </button>
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="sf-settings__form" novalidate>
+            <div class="sf-form-field">
+                <label>Email</label>
+                <input pInputText [value]="authService.currentUser()?.email" disabled />
+                <small class="sf-form-field__hint">Email cannot be changed here.</small>
+            </div>
+
+            <div class="sf-form-field">
+                <label for="set-username">Username</label>
+                <input pInputText id="set-username" formControlName="username" />
+                @if (username.invalid && username.touched) {
+                <small class="sf-form-field__error">Username must be at least 3 characters.</small>
+                }
+            </div>
+
+            <div class="sf-form-field">
+                <label for="set-mobile">Mobile Number</label>
+                <input pInputText id="set-mobile" formControlName="mobile" placeholder="Optional" />
+            </div>
+
+            <p-button label="Save Profile" type="submit" [loading]="savingProfile()" styleClass="sf-full-btn" />
+        </form>
+    </section>
+
+    <!-- Security -->
+    <section class="sf-card sf-settings__section">
+        <h2>Security</h2>
+
+        <a routerLink="/dashboard/settings/change-password" class="sf-settings__option">
+            <div class="sf-settings__option-text">
+                <span class="sf-settings__option-title">Change Password</span>
+                <span class="sf-settings__option-desc">Update the password used to log in</span>
+            </div>
+            <i class="pi pi-chevron-right"></i>
+        </a>
+    </section>
+
+    <!-- Billing -->
+    <section class="sf-card sf-settings__section">
+        <h2>Billing</h2>
+
+        <a routerLink="/pricing" class="sf-settings__option">
+            <div class="sf-settings__option-text">
+                <span class="sf-settings__option-title">Plans</span>
+                <span class="sf-settings__option-desc">Compare and switch between plans</span>
+            </div>
+            <i class="pi pi-chevron-right"></i>
+        </a>
+
+        <a routerLink="/dashboard/settings/addons" class="sf-settings__option">
+            <div class="sf-settings__option-text">
+                <span class="sf-settings__option-title">Add-ons</span>
+                <span class="sf-settings__option-desc">Add extra storage, events, or specific features</span>
+            </div>
+            <i class="pi pi-chevron-right"></i>
+        </a>
+    </section>
+
+    <!-- Theme -->
+    <section class="sf-card sf-settings__section">
+        <h2>Appearance</h2>
+        <p class="sf-settings__hint">Choose how SnapFace looks on this device (and future logins).</p>
+
+        <div class="sf-settings__theme-options">
+            <button type="button" class="sf-settings__theme-btn"
+                [class.sf-settings__theme-btn--active]="themeService.mode() === 'light'" (click)="setTheme('light')">
+                <i class="pi pi-sun"></i>
+                <span>Light</span>
+            </button>
+            <button type="button" class="sf-settings__theme-btn"
+                [class.sf-settings__theme-btn--active]="themeService.mode() === 'dark'" (click)="setTheme('dark')">
+                <i class="pi pi-moon"></i>
+                <span>Dark</span>
+            </button>
+        </div>
+    </section>
+
+    @if (avatarPickerOpen()) {
+    <sf-avatar-picker (close)="avatarPickerOpen.set(false)" />
+    }
+
+</div>

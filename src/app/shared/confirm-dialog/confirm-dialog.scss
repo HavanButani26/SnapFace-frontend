@@ -1,0 +1,112 @@
+.sf-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    animation: sf-confirm-fade-in 0.15s ease-out;
+}
+
+.sf-confirm-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4001;
+    width: 100%;
+    max-width: 22rem;
+    padding: var(--sf-space-lg);
+    background: var(--sf-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--sf-card-border);
+    border-radius: var(--sf-radius-lg);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    animation: sf-confirm-pop-in 0.18s ease-out;
+
+    &__title {
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+    }
+
+    &__message {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+    }
+
+    &__btn {
+        padding: 0.6rem 1.1rem;
+        border-radius: var(--sf-radius-sm);
+        font-size: 0.875rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: opacity 0.15s ease, background-color 0.15s ease;
+
+        &--cancel {
+            background: transparent;
+            border-color: var(--sf-card-border);
+            color: var(--sf-text);
+
+            &:hover {
+                background: var(--sf-bg-alt);
+            }
+        }
+
+        &--primary {
+            background: var(--sf-gradient);
+            color: #ffffff;
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+
+        &--danger {
+            background: #ef4444;
+            color: #ffffff;
+
+            &:hover {
+                background: #dc2626;
+            }
+        }
+    }
+}
+
+@keyframes sf-confirm-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes sf-confirm-pop-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sf-confirm-backdrop,
+    .sf-confirm-dialog {
+        animation: none;
+    }
+}

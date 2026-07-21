@@ -1,0 +1,105 @@
+<section class="sf-section sf-ai">
+    <div class="sf-container sf-ai__inner">
+
+        <!-- Left: copy + capability row -->
+        <div class="sf-ai__copy">
+            <span class="sf-ai__eyebrow">AI That Understands People</span>
+            <h2 class="sf-ai__title">
+                Advanced AI.<br />
+                <span class="sf-gradient-text">Real Human Connection.</span>
+            </h2>
+            <p class="sf-ai__desc">
+                Our AI doesn't just detect faces, it understands expressions, connections and unforgettable moments.
+            </p>
+
+            <div class="sf-ai__capabilities">
+                @for (cap of capabilities; track cap.label) {
+                <div class="sf-ai__capability">
+                    <div class="sf-ai__capability-icon">
+                        <i class="pi" [ngClass]="cap.icon"></i>
+                    </div>
+                    <span>{{ cap.label }}</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Middle: generated dot-matrix head graphic -->
+        <div class="sf-ai__graphic">
+            <svg class="sf-ai__svg" [attr.viewBox]="'0 0 ' + vbWidth + ' ' + vbHeight"
+                xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+
+                <defs>
+                    <radialGradient id="sf-ai-glow" cx="45%" cy="35%" r="60%">
+                        <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.18" />
+                        <stop offset="100%" stop-color="#00D4FF" stop-opacity="0" />
+                    </radialGradient>
+                </defs>
+
+                <circle [attr.cx]="vbWidth / 2" [attr.cy]="vbHeight / 2" r="180" fill="url(#sf-ai-glow)" />
+
+                <!-- network edges -->
+                @for (edge of edges; track $index) {
+                <line [attr.x1]="edge.x1" [attr.y1]="edge.y1" [attr.x2]="edge.x2" [attr.y2]="edge.y2"
+                    class="sf-ai__line" />
+                }
+
+                <!-- lines from icon nodes into the central hub -->
+                @for (node of nodes; track node.icon) {
+                <line [attr.x1]="node.x" [attr.y1]="node.y" [attr.x2]="node.anchorX" [attr.y2]="node.anchorY"
+                    class="sf-ai__line sf-ai__line--accent" />
+                }
+
+                <!-- central hub -->
+                <circle [attr.cx]="vbWidth / 2" [attr.cy]="vbHeight / 2" r="6" class="sf-ai__hub" />
+
+                <!-- star field / satellite dots -->
+                @for (p of starPoints; track $index) {
+                <circle [attr.cx]="p.x" [attr.cy]="p.y" [attr.r]="p.r" class="sf-ai__dot" />
+                }
+            </svg>
+
+            <!-- HTML overlay nodes, positioned in the same coordinate space as the SVG -->
+            @for (node of nodes; track node.icon) {
+            <div class="sf-ai__node" [ngClass]="node.colorClass" [style.left.%]="(node.x / vbWidth) * 100"
+                [style.top.%]="(node.y / vbHeight) * 100">
+                <i class="pi" [ngClass]="node.icon"></i>
+            </div>
+            }
+        </div>
+
+        <!-- Right: For Photographers / For Guests panels -->
+        <div class="sf-ai__panels">
+
+            <div class="sf-card sf-ai-panel">
+                <h3 class="sf-ai-panel__title">
+                    <i class="pi pi-camera"></i>
+                    For Photographers
+                </h3>
+                <ul class="sf-ai-panel__list">
+                    @for (item of photographerItems; track item.text) {
+                    <li><i class="pi pi-check-circle"></i>{{ item.text }}</li>
+                    }
+                </ul>
+                <p-button label="Learn More" icon="pi pi-arrow-right" iconPos="right" [outlined]="true"
+                    styleClass="w-full" routerLink="/for-photographers" />
+            </div>
+
+            <div class="sf-card sf-ai-panel">
+                <h3 class="sf-ai-panel__title">
+                    <i class="pi pi-heart"></i>
+                    For Guests
+                </h3>
+                <ul class="sf-ai-panel__list">
+                    @for (item of guestItems; track item.text) {
+                    <li><i class="pi pi-check-circle"></i>{{ item.text }}</li>
+                    }
+                </ul>
+                <p-button label="Learn More" icon="pi pi-arrow-right" iconPos="right" [outlined]="true"
+                    styleClass="w-full" routerLink="/for-guests" />
+            </div>
+
+        </div>
+
+    </div>
+</section>

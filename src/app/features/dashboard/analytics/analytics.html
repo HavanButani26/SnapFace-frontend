@@ -1,0 +1,81 @@
+<div class="sf-analytics">
+
+    <h1>Analytics</h1>
+
+    @if (loading()) {
+    <p class="sf-analytics__loading">Loading analytics...</p>
+    } @else if (data(); as d) {
+
+    <!-- Summary cards -->
+    <div class="sf-analytics__summary">
+        <div class="sf-card sf-summary-card">
+            <i class="pi pi-calendar"></i>
+            <div>
+                <span class="sf-summary-card__value">{{ d.total_events }}</span>
+                <span class="sf-summary-card__label">Total Events</span>
+            </div>
+        </div>
+        <div class="sf-card sf-summary-card">
+            <i class="pi pi-images"></i>
+            <div>
+                <span class="sf-summary-card__value">{{ d.total_photos }}</span>
+                <span class="sf-summary-card__label">Total Photos</span>
+            </div>
+        </div>
+        <div class="sf-card sf-summary-card">
+            <i class="pi pi-users"></i>
+            <div>
+                <span class="sf-summary-card__value">{{ d.total_faces }}</span>
+                <span class="sf-summary-card__label">Faces Detected</span>
+            </div>
+        </div>
+        <div class="sf-card sf-summary-card">
+            <i class="pi pi-cloud"></i>
+            <div>
+                <span class="sf-summary-card__value">{{ d.total_storage_mb }} MB</span>
+                <span class="sf-summary-card__label">Storage Used</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="sf-analytics__charts">
+        <div class="sf-card sf-chart-card sf-chart-card--wide">
+            <h3>Photos Uploaded (Last 30 Days)</h3>
+            @if (data()!.photos_over_time.length === 0) {
+            <p class="sf-chart-card__empty">No photos uploaded in the last 30 days.</p>
+            } @else {
+            <p-chart type="line" [data]="photosOverTimeChart" [options]="lineChartOptions" [height]="'260px'" />
+            }
+        </div>
+
+        <div class="sf-card sf-chart-card">
+            <h3>Events by Status</h3>
+            @if (d.total_events === 0) {
+            <p class="sf-chart-card__empty">No events yet.</p>
+            } @else {
+            <p-chart type="doughnut" [data]="eventsByStatusChart" [options]="doughnutChartOptions" [height]="'220px'" />
+            }
+        </div>
+    </div>
+
+    <!-- Top events -->
+    <div class="sf-card sf-top-events">
+        <h3>Top Events by Photo Count</h3>
+        @if (d.top_events.length === 0) {
+        <p class="sf-chart-card__empty">No events yet.</p>
+        } @else {
+        <div class="sf-top-events__list">
+            @for (event of d.top_events; track event.id) {
+            <a [routerLink]="['/dashboard/events', event.id]" class="sf-top-events__row">
+                <span class="sf-top-events__name">{{ event.name }}</span>
+                <span class="sf-top-events__count">{{ event.photo_count }} photos</span>
+            </a>
+            }
+        </div>
+        }
+    </div>
+
+    }
+
+</div>

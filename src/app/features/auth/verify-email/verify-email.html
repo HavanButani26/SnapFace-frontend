@@ -1,0 +1,32 @@
+<sf-auth-layout>
+    <div class="sf-auth-card sf-verify">
+
+        @switch (state()) {
+        @case ('loading') {
+        <div class="sf-verify__icon sf-verify__icon--loading">
+            <i class="pi pi-spin pi-spinner"></i>
+        </div>
+        <h1 class="sf-auth-card__title">Verifying your email...</h1>
+        <p class="sf-auth-card__subtitle">This will just take a moment.</p>
+        }
+
+        @case ('success') {
+        <div class="sf-verify__icon sf-verify__icon--success">
+            <i class="pi pi-check-circle"></i>
+        </div>
+        <h1 class="sf-auth-card__title">Email verified!</h1>
+        <p class="sf-auth-card__subtitle">Redirecting you to login...</p>
+        }
+
+        @case ('error') {
+        <div class="sf-verify__icon sf-verify__icon--error">
+            <i class="pi pi-times-circle"></i>
+        </div>
+        <h1 class="sf-auth-card__title">Verification failed</h1>
+        <p class="sf-auth-card__subtitle">{{ errorMessage() }}</p>
+        <p-button label="Go to Login" routerLink="/login" styleClass="sf-full-btn" size="large" />
+        }
+        }
+
+    </div>
+</sf-auth-layout>

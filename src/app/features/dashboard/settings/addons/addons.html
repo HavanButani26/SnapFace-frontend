@@ -1,0 +1,42 @@
+<div class="sf-addons">
+
+    <a routerLink="/dashboard/settings" class="sf-addons__back">
+        <i class="pi pi-arrow-left"></i> Back to Settings
+    </a>
+
+    <h1>Add-ons</h1>
+    <p class="sf-addons__hint">
+        Need more of one specific thing? Add capacity or unlock a single feature without a full plan upgrade.
+    </p>
+
+    @if (loading()) {
+    <p class="sf-addons__loading">Loading add-ons...</p>
+    } @else {
+    <div class="sf-addons__grid">
+        @for (addon of addons(); track addon.id) {
+        <div class="sf-card sf-addon-card">
+            <h3>{{ addon.name }}</h3>
+            <p>{{ addon.description }}</p>
+
+            @if (addon.limit_type) {
+            <span class="sf-addon-card__boost">+{{ addon.limit_boost_value }} {{ addon.limit_type_display }}</span>
+            }
+
+            <div class="sf-addon-card__footer">
+                <span class="sf-addon-card__price">${{ addon.price }}</span>
+
+                @if (isFeatureAddonActive(addon)) {
+                <span class="sf-addon-card__active">Active</span>
+                } @else {
+                <button type="button" class="sf-addon-card__btn" [disabled]="purchasingId() === addon.id"
+                    (click)="purchase(addon)">
+                    {{ purchasingId() === addon.id ? 'Processing...' : 'Add' }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+</div>

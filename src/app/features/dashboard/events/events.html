@@ -1,0 +1,100 @@
+<div class="sf-events">
+
+    <div class="sf-events__header">
+        <div>
+            <h1>Events</h1>
+            <p>Manage your photography events and guest access links.</p>
+        </div>
+
+        <div class="sf-events__header-actions">
+            <div class="sf-events__view-toggle">
+                <button type="button" [class.sf-events__view-toggle-btn--active]="viewMode() === 'grid'"
+                    class="sf-events__view-toggle-btn" (click)="setView('grid')" aria-label="Grid view">
+                    <i class="pi pi-th-large"></i>
+                </button>
+                <button type="button" [class.sf-events__view-toggle-btn--active]="viewMode() === 'table'"
+                    class="sf-events__view-toggle-btn" (click)="setView('table')" aria-label="Table view">
+                    <i class="pi pi-list"></i>
+                </button>
+            </div>
+
+            <p-button label="New Event" icon="pi pi-plus" routerLink="/dashboard/events/new" />
+        </div>
+    </div>
+
+    @if (loading()) {
+    <p class="sf-events__loading">Loading events...</p>
+    } @else if (events().length === 0) {
+    <div class="sf-events__empty sf-card">
+        <i class="pi pi-calendar-plus"></i>
+        <h3>No events yet</h3>
+        <p>Create your first event to start uploading photos and sharing them with guests.</p>
+        <p-button label="Create your first event" icon="pi pi-plus" routerLink="/dashboard/events/new" />
+    </div>
+    } @else if (viewMode() === 'grid') {
+
+    <div class="sf-events__grid">
+        @for (event of events(); track event.id) {
+        <a [routerLink]="['/dashboard/events', event.id]" class="sf-card sf-card--hoverable sf-event-card">
+            <div class="sf-event-card__cover" [class.sf-event-card__cover--empty]="!event.cover_photo">
+                @if (event.cover_photo) {
+                <img [src]="event.cover_photo" [alt]="event.name" />
+                } @else {
+                <i class="pi pi-image"></i>
+                }
+                <span class="sf-event-card__status" [class]="'sf-event-card__status--' + event.status">
+                    {{ statusLabel(event.status) }}
+                </span>
+                <button type="button" class="sf-event-card__edit-btn" (click)="editEvent(event.id, $event)"
+                    aria-label="Edit event">
+                    <i class="pi pi-pencil"></i>
+                </button>
+            </div>
+            <div class="sf-event-card__body">
+                <h3>{{ event.name }}</h3>
+                <p class="sf-event-card__date"><i class="pi pi-calendar"></i> {{ event.event_date | date:'mediumDate' }}
+                </p>
+                @if (event.venue) {
+                <p class="sf-event-card__venue"><i class="pi pi-map-marker"></i> {{ event.venue }}</p>
+                }
+                @if (event.is_password_protected) {
+                <span class="sf-event-card__lock"><i class="pi pi-lock"></i> Password protected</span>
+                }
+            </div>
+        </a>
+        }
+    </div>
+
+    } @else {
+
+    <p-table [value]="events()" styleClass="sf-events__table">
+        <ng-template #header>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Status</th>
+                <th>Guests</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-event>
+            <tr>
+                <td>{{ event.name }}</td>
+                <td>{{ event.event_date | date:'mediumDate' }}</td>
+                <td>{{ event.venue || '—' }}</td>
+                <td><span class="sf-event-card__status sf-event-card__status--inline"
+                        [class]="'sf-event-card__status--' + event.status">{{ statusLabel(event.status) }}</span></td>
+                <td>{{ event.expected_guest_count ?? '—' }}</td>
+                <td>
+                    <a [routerLink]="['/dashboard/events', event.id, 'edit']" class="sf-events__table-edit">
+                        <i class="pi pi-pencil"></i> Edit
+                    </a>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    }
+
+</div>

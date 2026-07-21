@@ -1,0 +1,76 @@
+<header class="sf-navbar" [class.sf-navbar--scrolled]="isScrolled()">
+    <div class="sf-container sf-navbar__inner">
+
+        <!-- Logo -->
+        <a routerLink="/" class="sf-navbar__brand">
+            <img [src]="themeService.mode() === 'dark' ? 'assets/logos/logo-navbar-dark.svg' : 'assets/logos/logo-navbar-light.svg'"
+                alt="SnapFace" class="sf-navbar__logo-img" />
+        </a>
+
+        <!-- Desktop nav links -->
+        <nav class="sf-navbar__links">
+            @for (link of navLinks; track link.label) {
+            <a [routerLink]="link.path" [fragment]="link.fragment" class="sf-navbar__link"
+                [class.sf-navbar__link--active]="isLinkActive(link)">
+                {{ link.label }}
+            </a>
+            }
+        </nav>
+
+        <!-- Desktop right actions -->
+        <div class="sf-navbar__actions">
+            <button type="button" class="sf-navbar__theme-toggle" (click)="toggleTheme()"
+                [attr.aria-label]="themeService.mode() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+                <i class="pi" [class.pi-sun]="themeService.mode() === 'dark'"
+                    [class.pi-moon]="themeService.mode() === 'light'"></i>
+            </button>
+
+            @if (authService.isLoggedIn()) {
+            <p-button label="Dashboard" routerLink="/dashboard" size="small" />
+            } @else {
+            <a routerLink="/login" class="sf-navbar__login-link">Log in</a>
+            <p-button label="Get Started Free" routerLink="/register" size="small" />
+            }
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button type="button" class="sf-navbar__hamburger" (click)="toggleMobileMenu()" aria-label="Open menu">
+            <i class="pi pi-bars"></i>
+        </button>
+
+    </div>
+</header>
+
+<!-- Mobile drawer -->
+<p-drawer [(visible)]="mobileMenuOpen" position="right" styleClass="sf-mobile-drawer">
+
+    <ng-template #header>
+        <img [src]="themeService.mode() === 'dark' ? 'assets/logos/logo-navbar-dark.svg' : 'assets/logos/logo-navbar-light.svg'"
+            alt="SnapFace" class="sf-navbar__logo-img" />
+    </ng-template>
+
+    <nav class="sf-mobile-drawer__links">
+        @for (link of navLinks; track link.label) {
+        <a [routerLink]="link.path" [fragment]="link.fragment" (click)="closeMobileMenu()"
+            class="sf-mobile-drawer__link" [class.sf-mobile-drawer__link--active]="isLinkActive(link)">
+            {{ link.label }}
+        </a>
+        }
+    </nav>
+
+    <div class="sf-mobile-drawer__actions">
+        <button type="button" class="sf-navbar__theme-toggle sf-navbar__theme-toggle--mobile" (click)="toggleTheme()">
+            <i class="pi" [class.pi-sun]="themeService.mode() === 'dark'"
+                [class.pi-moon]="themeService.mode() === 'light'"></i>
+            <span>{{ themeService.mode() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
+        </button>
+
+        @if (authService.isLoggedIn()) {
+        <p-button label="Dashboard" routerLink="/dashboard" (click)="closeMobileMenu()" styleClass="sf-full-btn" />
+        } @else {
+        <a routerLink="/login" (click)="closeMobileMenu()" class="sf-mobile-drawer__login-link">Log in</a>
+        <p-button label="Get Started Free" routerLink="/register" (click)="closeMobileMenu()"
+            styleClass="sf-full-btn" />
+        }
+    </div>
+</p-drawer>

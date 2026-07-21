@@ -1,0 +1,332 @@
+.sf-event-form {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-space-sm);
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.sf-event-form__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--sf-text-muted);
+    width: fit-content;
+
+    &:hover {
+        color: var(--sf-cyan);
+    }
+}
+
+.sf-event-form__loading {
+    color: var(--sf-text-muted);
+}
+
+.sf-event-form__card {
+    padding: var(--sf-space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.sf-event-form__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+
+    @media (min-width: 560px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.sf-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--sf-text);
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        background: var(--sf-input-bg);
+        border: 1px solid var(--sf-input-border);
+        color: var(--sf-text);
+    }
+
+    textarea {
+        resize: none; // removes the stretch/drag handle in the corner
+    }
+
+    &__error {
+        color: #ef4444;
+        font-size: 0.8125rem;
+    }
+
+    &__hint {
+        color: var(--sf-text-subtle);
+        font-size: 0.8rem;
+    }
+}
+
+.sf-event-form__password-section {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--sf-card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.sf-event-form__password-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.9rem;
+    color: var(--sf-text);
+    cursor: pointer;
+}
+
+.sf-event-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding-top: 0.5rem;
+}
+
+// ------------------------------------------------------------------
+// Custom checkbox — fully self-built, no PrimeNG/browser-default
+// ambiguity. appearance:none strips native styling, pseudo-element
+// draws the checkmark.
+// ------------------------------------------------------------------
+.sf-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border: 1.5px solid var(--sf-input-border);
+    border-radius: 5px;
+    background: var(--sf-input-bg);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        border-color: var(--sf-cyan);
+    }
+
+    &:checked {
+        background: var(--sf-gradient);
+        border-color: transparent;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid #ffffff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+    }
+}
+
+// ------------------------------------------------------------------
+// PrimeNG input-style controls (InputNumber, DatePicker trigger,
+// Select trigger, Password) — same visual treatment as plain <input>,
+// since their internal input isn't reached by the plain `input {}`
+// rule above (each is a different component with its own markup).
+// ------------------------------------------------------------------
+::ng-deep .sf-form-field {
+
+    .p-inputnumber,
+    .p-datepicker,
+    .p-select {
+        width: 100%;
+    }
+
+    .p-inputnumber-input,
+    .p-datepicker-input,
+    .p-select-label {
+        background: var(--sf-input-bg) !important;
+        border: 1px solid var(--sf-input-border) !important;
+        color: var(--sf-text) !important;
+    }
+
+    .p-select {
+        background: var(--sf-input-bg) !important;
+        border: none;
+    }
+
+    .p-password input {
+        width: 100%;
+        background: var(--sf-input-bg) !important;
+        border: 1px solid var(--sf-input-border) !important;
+        color: var(--sf-text) !important;
+    }
+
+    // Calendar trigger icon + dropdown arrow button on the input itself
+    // (not the popup panel, which is styled further below)
+    .p-datepicker-input-icon-container,
+    .p-datepicker-dropdown,
+    .p-select-dropdown {
+        color: var(--sf-text-muted) !important;
+        background: var(--sf-input-bg) !important;
+        border: 1px solid var(--sf-input-border) !important;
+
+        svg,
+        i {
+            color: var(--sf-text-muted) !important;
+        }
+    }
+
+    .p-datepicker-input,
+    .p-select-label {
+        border-right: none !important;
+        border-radius: 8px 0 0 8px;
+    }
+
+    .p-datepicker-dropdown,
+    .p-select-dropdown {
+        border-radius: 0 8px 8px 0;
+        border-left: none !important;
+    }
+
+    .p-datepicker-dropdown:hover,
+    .p-select-dropdown:hover {
+        color: var(--sf-cyan) !important;
+
+        svg,
+        i {
+            color: var(--sf-cyan) !important;
+        }
+    }
+}
+
+// ------------------------------------------------------------------
+// Floating overlay panels (calendar popup, select dropdown list) are
+// appended to <body> (appendTo="body"), so they're OUTSIDE this
+// component's own DOM tree. ::ng-deep compiles to a global selector
+// (it strips Angular's view-encapsulation scoping attribute), so as
+// long as these blocks are NOT nested under another scoped ancestor
+// selector, they still correctly reach elements appended to <body>.
+// ------------------------------------------------------------------
+::ng-deep {
+
+    // Select's dropdown options panel
+    .p-select-overlay {
+        background: var(--sf-card-bg) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--sf-card-border) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3) !important;
+
+        .p-select-list {
+            padding: 0.35rem;
+        }
+
+        .p-select-option {
+            color: var(--sf-text) !important;
+            border-radius: 6px;
+            padding: 0.6rem 0.75rem !important;
+        }
+
+        .p-select-option:hover {
+            background: var(--sf-gradient) !important;
+            color: #ffffff !important;
+        }
+
+        .p-select-option-selected {
+            background: var(--sf-bg-alt) !important;
+            color: var(--sf-cyan) !important;
+            font-weight: 600;
+        }
+    }
+
+    // Date picker calendar popup panel
+    .p-datepicker-panel {
+        background: var(--sf-card-bg) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--sf-card-border) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3) !important;
+        padding: 0.75rem;
+
+        .p-datepicker-header {
+            background: transparent;
+            color: var(--sf-text);
+            border-block-end: 1px solid var(--sf-card-border) !important;
+        }
+
+        .p-datepicker-title,
+        .p-datepicker-select-year,
+        .p-datepicker-select-month {
+            color: var(--sf-text) !important;
+            font-weight: 600;
+        }
+
+        .p-datepicker-prev-button,
+        .p-datepicker-next-button {
+            color: var(--sf-text-muted) !important;
+        }
+
+        .p-datepicker-prev-button:hover,
+        .p-datepicker-next-button:hover {
+            color: var(--sf-cyan) !important;
+            background: var(--sf-bg-alt) !important;
+        }
+
+        table th {
+            color: var(--sf-text-muted) !important;
+        }
+
+        table td {
+            color: var(--sf-text) !important;
+        }
+
+        table td>span {
+            border-radius: 6px;
+        }
+
+        table td>span:hover {
+            background: var(--sf-gradient) !important;
+            color: #ffffff !important;
+        }
+
+        // Today indicator — defensive selectors covering a few plausible
+        // PrimeNG v21 naming variants (can't verify exact one without
+        // inspecting the live DOM).
+        td.p-datepicker-today>span,
+        td[data-p-today="true"]>span,
+        span.p-datepicker-today {
+            border: 1.5px solid var(--sf-cyan) !important;
+            font-weight: 700;
+        }
+
+        td.p-datepicker-today>span {
+            background: transparent;
+        }
+
+        // Selected date wins over "today" outline if a date is both —
+        // gradient fill takes priority, listed after so it overrides.
+        td.p-datepicker-selected>span,
+        td[data-p-selected="true"]>span,
+        span.p-highlight {
+            background: var(--sf-gradient) !important;
+            color: #ffffff !important;
+            border-color: transparent !important;
+        }
+    }
+}

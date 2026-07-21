@@ -1,0 +1,108 @@
+.sf-final-cta {
+    position: relative;
+    padding-block: var(--sf-space-2xl);
+    background: var(--sf-gradient);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(600px 400px at 50% 0%, rgba(255, 255, 255, 0.15), transparent 70%);
+        pointer-events: none;
+    }
+
+    &__inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--sf-space-sm);
+    }
+
+    &__title {
+        font-size: 2rem;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+        max-width: 32rem;
+    }
+
+    &__subtitle {
+        font-size: 1.0625rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 28rem;
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--sf-space-sm);
+        margin-top: var(--sf-space-sm);
+    }
+
+    &__trust {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--sf-space-md);
+        margin-top: var(--sf-space-sm);
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+
+        span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        i {
+            color: #ffffff;
+        }
+    }
+
+    &__ghost-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: var(--sf-radius-sm);
+        cursor: pointer;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #ffffff;
+        }
+    }
+
+    // Only the primary (filled) button still routes through PrimeNG, and it
+    // needs white-on-gradient contrast regardless of the active theme.
+    ::ng-deep {
+        .sf-final-cta__primary-btn {
+            .p-button {
+                background: #ffffff;
+                color: #0099cc;
+                border: none;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .sf-final-cta__title {
+        font-size: 2.5rem;
+    }
+}

@@ -1,0 +1,124 @@
+.sf-auth-card {
+    width: 100%;
+    max-width: 24rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &--wide {
+        max-width: 26rem;
+    }
+
+    &__title {
+        font-size: 1.6rem;
+        letter-spacing: -0.01em;
+        color: #ffffff;
+    }
+
+    &__subtitle {
+        font-size: 0.9375rem;
+        margin-bottom: 1rem;
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    &__message {
+        margin-bottom: 0.5rem;
+    }
+
+    &__divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-block: 0.5rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8125rem;
+
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    &__terms {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        font-size: 0.8125rem;
+        color: rgba(255, 255, 255, 0.75);
+        cursor: pointer;
+        margin-top: 0.25rem;
+
+        a {
+            color: var(--sf-cyan);
+            font-weight: 600;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &__footer {
+        text-align: center;
+        font-size: 0.875rem;
+        margin-top: 1.25rem;
+        color: rgba(255, 255, 255, 0.75);
+
+        a {
+            color: var(--sf-cyan);
+            font-weight: 600;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.sf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    input,
+    ::ng-deep .p-password input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+    }
+
+    &__error {
+        color: #ff8a8a;
+        font-size: 0.8125rem;
+    }
+}
+
+::ng-deep .sf-full-btn {
+    display: block;
+    width: 100%;
+
+    .p-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

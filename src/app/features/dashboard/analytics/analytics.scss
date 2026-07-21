@@ -1,0 +1,134 @@
+.sf-analytics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-space-md);
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.sf-analytics__loading {
+    color: var(--sf-text-muted);
+}
+
+.sf-analytics__summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sf-space-md);
+}
+
+@media (min-width: 900px) {
+    .sf-analytics__summary {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.sf-summary-card {
+    padding: var(--sf-space-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    i {
+        font-size: 1.6rem;
+        color: var(--sf-cyan);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--sf-radius-sm);
+        background: var(--sf-bg-alt);
+        flex-shrink: 0;
+    }
+
+    div {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.sf-summary-card__value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--sf-text);
+}
+
+.sf-summary-card__label {
+    font-size: 0.8rem;
+    color: var(--sf-text-muted);
+}
+
+.sf-analytics__charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--sf-space-md);
+}
+
+@media (min-width: 1000px) {
+    .sf-analytics__charts {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.sf-chart-card {
+    padding: var(--sf-space-lg);
+
+    h3 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    &--wide {
+        min-width: 0;
+    }
+}
+
+.sf-chart-card__empty {
+    color: var(--sf-text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.sf-top-events {
+    padding: var(--sf-space-lg);
+
+    h3 {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.sf-top-events__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sf-top-events__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: var(--sf-radius-sm);
+    background: var(--sf-bg-alt);
+    color: var(--sf-text);
+    font-size: 0.875rem;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+        background: var(--sf-gradient);
+        color: #ffffff;
+    }
+}
+
+.sf-top-events__count {
+    font-weight: 600;
+    color: var(--sf-text-muted);
+}
+
+.sf-top-events__row:hover .sf-top-events__count {
+    color: rgba(255, 255, 255, 0.85);
+}

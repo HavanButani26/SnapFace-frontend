@@ -1,0 +1,93 @@
+<section class="sf-hero">
+    <div class="sf-container sf-hero__inner">
+
+        <!-- Left: copy -->
+        <div class="sf-hero__content">
+            <span class="sf-hero__badge">
+                <i class="pi pi-sparkles"></i>
+                AI-Powered Event Media Platform
+            </span>
+
+            <h1 class="sf-hero__headline">
+                Every Face.<br />
+                Every Moment.<br />
+                <span class="sf-gradient-text">Found Instantly.</span>
+            </h1>
+
+            <p class="sf-hero__subtext">
+                Upload once, our AI finds every face in your event photos. Guests upload a selfie and get their photos
+                in seconds.
+            </p>
+
+            <div class="sf-hero__actions">
+                <p-button label="Start Free Trial" icon="pi pi-arrow-right" iconPos="right" routerLink="/register"
+                    size="large" />
+                <p-button label="Watch Demo" icon="pi pi-play-circle" [outlined]="true" size="large" />
+            </div>
+
+            <div class="sf-hero__stats">
+                @for (stat of stats; track stat.label) {
+                <div class="sf-hero__stat">
+                    <div class="sf-hero__stat-icon">
+                        <i class="pi" [ngClass]="stat.icon"></i>
+                    </div>
+                    <div class="sf-hero__stat-text">
+                        <span class="sf-hero__stat-value">{{ stat.value }}</span>
+                        <span class="sf-hero__stat-label">{{ stat.label }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right: phone visual -->
+        <div class="sf-hero__visual">
+
+            <div class="sf-hero__float sf-hero__float--1" aria-hidden="true"><i class="pi pi-user"></i></div>
+            <div class="sf-hero__float sf-hero__float--2" aria-hidden="true"><i class="pi pi-users"></i></div>
+            <div class="sf-hero__float sf-hero__float--3" aria-hidden="true"><i class="pi pi-heart-fill"></i></div>
+            <div class="sf-hero__float sf-hero__float--4" aria-hidden="true"><i class="pi pi-image"></i></div>
+
+            <div class="sf-phone">
+                <div class="sf-phone__notch"></div>
+
+                <div class="sf-phone__screen">
+                    <div class="sf-phone__scan-frame">
+                        <span class="sf-phone__corner sf-phone__corner--tl"></span>
+                        <span class="sf-phone__corner sf-phone__corner--tr"></span>
+                        <span class="sf-phone__corner sf-phone__corner--bl"></span>
+                        <span class="sf-phone__corner sf-phone__corner--br"></span>
+                        <div class="sf-phone__scan-line"></div>
+                        <div class="sf-phone__face-icon"><i class="pi pi-user"></i></div>
+                    </div>
+
+                    <span class="sf-phone__label">Scanning Faces...</span>
+
+                    <div class="sf-phone__match-card">
+                        <div class="sf-phone__match-header">
+                            <i class="pi pi-check-circle"></i>
+                            <span>Match Found</span>
+                        </div>
+                        <div class="sf-phone__match-count">42 Photos Found</div>
+                        <div class="sf-phone__thumbs">
+                            @for (t of thumbPlaceholders; track t) {
+                            <div class="sf-phone__thumb"><i class="pi pi-image"></i></div>
+                            }
+                            <div class="sf-phone__thumb sf-phone__thumb--more">+37</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sf-hero__speed-badge">
+                <i class="pi pi-bolt"></i>
+                <div class="sf-hero__speed-text">
+                    <span class="sf-hero__speed-value">0.8s</span>
+                    <span class="sf-hero__speed-label">Avg. Processing Time</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>

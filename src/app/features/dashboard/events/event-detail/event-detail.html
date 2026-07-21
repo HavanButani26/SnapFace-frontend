@@ -1,0 +1,195 @@
+<div class="sf-event-detail">
+
+  <a routerLink="/dashboard/events" class="sf-event-detail__back">
+    <i class="pi pi-arrow-left"></i> Back to Events
+  </a>
+
+  @if (loading()) {
+  <p class="sf-event-detail__loading">Loading event...</p>
+  } @else if (event(); as ev) {
+
+  <div class="sf-event-detail__header">
+    <div>
+      <h1>{{ ev.name }}</h1>
+      <p class="sf-event-detail__meta">
+        <i class="pi pi-calendar"></i> {{ ev.event_date | date:'mediumDate' }}
+        @if (ev.venue) { <span> &middot; <i class="pi pi-map-marker"></i> {{ ev.venue }}</span> }
+      </p>
+    </div>
+    <p-button label="Edit Event" icon="pi pi-pencil" [outlined]="true"
+      [routerLink]="['/dashboard/events', ev.id, 'edit']" />
+  </div>
+
+  <div class="sf-event-detail__grid">
+
+    <!-- Guest access card -->
+    <div class="sf-card sf-guest-access">
+      <h3>Guest Access</h3>
+      <p class="sf-guest-access__hint">Share this link or QR code with guests so they can find their photos.</p>
+
+      @if (qrDataUrl()) {
+      <img [src]="qrDataUrl()!" alt="Guest access QR code" class="sf-guest-access__qr" />
+      }
+
+      <div class="sf-guest-access__link-row">
+        <input type="text" [value]="ev.guest_link" readonly class="sf-guest-access__link-input" />
+        <button type="button" class="sf-guest-access__copy-btn" (click)="copyGuestLink()" aria-label="Copy link">
+          <i class="pi pi-copy"></i>
+        </button>
+      </div>
+
+      @if (ev.is_password_protected) {
+      <span class="sf-guest-access__lock"><i class="pi pi-lock"></i> Password protected</span>
+      }
+    </div>
+
+    <!-- Upload + photo grid -->
+    <div class="sf-event-detail__photos-section">
+
+      @if (stagedFiles().length === 0) {
+      <div class="sf-upload-zone" [class.sf-upload-zone--dragging]="isDragging()" (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+        <i class="pi pi-cloud-upload"></i>
+        <p><strong>Drag & drop photos here</strong></p>
+        <div class="sf-upload-zone__buttons">
+          <label class="sf-upload-zone__btn">
+            Browse Files
+            <input type="file" accept="image/*" multiple (change)="onFileInputChange($event)" />
+          </label>
+          <label class="sf-upload-zone__btn sf-upload-zone__btn--outline">
+            Upload Folder
+            <input type="file" webkitdirectory directory multiple (change)="onFileInputChange($event)" />
+          </label>
+        </div>
+      </div>
+      }
+
+      <!-- Staged (not-yet-uploaded) preview grid -->
+      @if (stagedFiles().length > 0) {
+      <div class="sf-staged">
+        <div class="sf-staged__header">
+          <h3>{{ stagedFiles().length }} photo(s) ready to upload</h3>
+          @if (!uploading()) {
+          <button type="button" class="sf-staged__clear-btn" (click)="clearAllStaged()">Clear all</button>
+          }
+        </div>
+
+        <div class="sf-staged__grid">
+          @for (staged of stagedFiles(); track staged.id; let i = $index) {
+          <div class="sf-staged__item">
+            <img [src]="staged.previewUrl" alt="" (click)="openLightbox(i)" />
+            @if (!uploading()) {
+            <button type="button" class="sf-staged__remove-btn" (click)="removeStagedFile(staged.id)"
+              aria-label="Remove">
+              <i class="pi pi-times"></i>
+            </button>
+            }
+          </div>
+          }
+
+          @if (!uploading()) {
+          <label class="sf-staged__add-more">
+            <i class="pi pi-plus"></i>
+            <span>Add more</span>
+            <input type="file" accept="image/*" multiple (change)="onFileInputChange($event)" />
+          </label>
+          }
+        </div>
+
+        @if (uploading()) {
+        <div class="sf-upload-summary">
+          <div class="sf-upload-summary__bar">
+            <div class="sf-upload-summary__fill" [style.width.%]="uploadPercent()"></div>
+          </div>
+          <span class="sf-upload-summary__text">
+            Uploading {{ uploadCompleted() }} of {{ uploadTotal() }}...
+          </span>
+        </div>
+        } @else {
+        @if (usage(); as u) {
+        <p class="sf-storage-preview" [class.sf-storage-preview--exceeds]="wouldExceedStorage()">
+          This upload: ~{{ (stagedTotalBytes() / (1024*1024)) | number:'1.0-1' }} MB &middot;
+          Storage used: {{ u.storage.used }} / {{ u.storage.limit }} GB
+          @if (wouldExceedStorage()) {
+          <span class="sf-storage-preview__error"> — this would exceed your plan's storage limit.</span>
+          }
+        </p>
+        }
+        <p-button [label]="'Upload ' + stagedFiles().length + ' Photo' + (stagedFiles().length > 1 ? 's' : '')"
+          icon="pi pi-cloud-upload" [disabled]="wouldExceedStorage()" (click)="startUpload()" />
+        }
+      </div>
+      }
+
+      <div class="sf-event-detail__photos-title-row">
+        <h3 class="sf-event-detail__photos-title">Photos ({{ photos().length }})</h3>
+        @if (photos().length > 8) {
+        <a [routerLink]="['/dashboard/events', ev.id, 'photos']" class="sf-event-detail__view-all">
+          View all {{ photos().length }} photos <i class="pi pi-arrow-right"></i>
+        </a>
+        }
+      </div>
+
+      @if (photos().length === 0) {
+      <p class="sf-event-detail__empty-photos">No photos uploaded yet.</p>
+      } @else {
+      <div class="sf-photo-grid">
+        @for (photo of previewPhotos(); track photo.id) {
+        <div class="sf-photo-grid__item">
+          <img [src]="photo.thumbnail_url || photo.image_url" [alt]="photo.original_filename" loading="lazy" />
+          @if (photo.status !== 'completed' && photo.status !== 'failed') {
+          <div class="sf-photo-grid__status" [class.sf-photo-grid__status--failed]="photo.status === 'failed'">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>{{ photo.status === 'processing' ? 'Analyzing...' : 'Queued' }}</span>
+          </div>
+          } @else if (photo.status === 'failed') {
+          <div class="sf-photo-grid__status sf-photo-grid__status--failed">
+            <i class="pi pi-exclamation-triangle"></i>
+            <span>Failed</span>
+          </div>
+          }
+        </div>
+        }
+      </div>
+      }
+
+    </div>
+
+  </div>
+
+  }
+
+  <!-- Custom lightbox — reviewing staged photos before upload -->
+  @if (lightboxIndex() !== null && stagedFiles()[lightboxIndex()!]; as current) {
+  <div class="sf-lightbox">
+    <div class="sf-lightbox__backdrop" (click)="closeLightbox()"></div>
+
+    <button type="button" class="sf-lightbox__close" (click)="closeLightbox()" aria-label="Close preview">
+      <i class="pi pi-times"></i>
+    </button>
+
+    @if (stagedFiles().length > 1) {
+    <button type="button" class="sf-lightbox__nav sf-lightbox__nav--prev" (click)="prevLightboxImage()"
+      aria-label="Previous">
+      <i class="pi pi-chevron-left"></i>
+    </button>
+    <button type="button" class="sf-lightbox__nav sf-lightbox__nav--next" (click)="nextLightboxImage()"
+      aria-label="Next">
+      <i class="pi pi-chevron-right"></i>
+    </button>
+    }
+
+    <img [src]="current.previewUrl" [alt]="current.file.name" class="sf-lightbox__image" />
+
+    <div class="sf-lightbox__footer">
+      <span>{{ current.file.name }}</span>
+      @if (!uploading()) {
+      <button type="button" class="sf-lightbox__remove" (click)="removeCurrentLightboxImage()">
+        <i class="pi pi-trash"></i> Remove
+      </button>
+      }
+    </div>
+  </div>
+  }
+
+</div>

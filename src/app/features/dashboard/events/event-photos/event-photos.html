@@ -1,0 +1,24 @@
+<div class="sf-event-photos">
+
+    <a [routerLink]="['/dashboard/events', event()?.id]" class="sf-event-photos__back">
+        <i class="pi pi-arrow-left"></i> Back to {{ event()?.name || 'Event' }}
+    </a>
+
+    <h1>All Photos @if (event()) { — {{ event()!.name }} }</h1>
+
+    @if (loading()) {
+    <p class="sf-event-photos__loading">Loading photos...</p>
+    } @else if (photos().length === 0) {
+    <p class="sf-event-photos__empty">No photos uploaded yet.</p>
+    } @else {
+    <p class="sf-event-photos__count">{{ photos().length }} photos</p>
+    <div class="sf-photo-grid">
+        @for (photo of photos(); track photo.id) {
+        <div class="sf-photo-grid__item">
+            <img [src]="photo.thumbnail_url || photo.image_url" [alt]="photo.original_filename" loading="lazy" />
+        </div>
+        }
+    </div>
+    }
+
+</div>

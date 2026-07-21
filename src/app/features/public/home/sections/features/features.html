@@ -1,0 +1,25 @@
+<section class="sf-section sf-features" id="features">
+    <div class="sf-container">
+
+        <div class="sf-features__header">
+            <span class="sf-features__eyebrow">Features</span>
+            <h2 class="sf-features__title">Everything you need, built in</h2>
+            <p class="sf-features__subtitle">
+                From upload to delivery, SnapFace handles the entire journey of finding and sharing event photos.
+            </p>
+        </div>
+
+        <div class="sf-features__grid">
+            @for (feature of features; track feature.title) {
+            <div class="sf-card sf-card--hoverable sf-feature-card">
+                <div class="sf-feature-icon" [ngClass]="feature.colorClass">
+                    <i class="pi" [ngClass]="feature.icon"></i>
+                </div>
+                <h3 class="sf-feature-card__title">{{ feature.title }}</h3>
+                <p class="sf-feature-card__desc">{{ feature.description }}</p>
+            </div>
+            }
+        </div>
+
+    </div>
+</section>

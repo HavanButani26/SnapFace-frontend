@@ -1,0 +1,22 @@
+<section class="sf-final-cta">
+    <div class="sf-container sf-final-cta__inner">
+
+        <h2 class="sf-final-cta__title">Ready to Find Every Event Photo?</h2>
+        <p class="sf-final-cta__subtitle">
+            Join thousands of photographers who trust SnapFace to deliver unforgettable experiences.
+        </p>
+
+        <div class="sf-final-cta__actions">
+            <p-button label="Start Free Trial" icon="pi pi-arrow-right" iconPos="right" routerLink="/register"
+                size="large" styleClass="sf-final-cta__primary-btn" />
+            <button type="button" class="sf-final-cta__ghost-btn">Book a Demo</button>
+        </div>
+
+        <div class="sf-final-cta__trust">
+            @for (point of trustPoints; track point) {
+            <span><i class="pi pi-check-circle"></i>{{ point }}</span>
+            }
+        </div>
+
+    </div>
+</section>

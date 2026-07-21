@@ -1,0 +1,115 @@
+.sf-testimonials {
+
+    &__header {
+        text-align: center;
+        max-width: 32rem;
+        margin-inline: auto;
+        margin-bottom: var(--sf-space-xl);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    &__eyebrow {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--sf-cyan);
+    }
+
+    &__title {
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    // Deep-selector overrides for PrimeNG Carousel internals to fit our theme
+    ::ng-deep .sf-testimonials__carousel {
+        .p-carousel-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--sf-space-md);
+        }
+
+        .p-carousel-indicator-list {
+            margin-top: var(--sf-space-sm);
+        }
+
+        .p-carousel-indicator button {
+            background-color: var(--sf-card-border);
+        }
+
+        .p-carousel-indicator-active button {
+            background: var(--sf-gradient);
+        }
+
+        .p-carousel-prev-button,
+        .p-carousel-next-button {
+            color: var(--sf-text);
+            background: var(--sf-bg-alt);
+            border: 1px solid var(--sf-card-border);
+        }
+    }
+}
+
+.sf-testimonial-card {
+    max-width: 42rem;
+    margin-inline: auto;
+    padding: var(--sf-space-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--sf-space-sm);
+
+    &__quote-icon {
+        font-size: 1.75rem;
+        color: var(--sf-cyan);
+        opacity: 0.5;
+    }
+
+    &__quote {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: var(--sf-text);
+    }
+
+    &__stars {
+        display: flex;
+        gap: 0.25rem;
+        color: #facc15;
+        font-size: 0.9rem;
+    }
+
+    &__author {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    &__avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--sf-gradient);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    &__name {
+        font-weight: 700;
+        font-size: 0.9375rem;
+        text-align: left;
+    }
+
+    &__role {
+        font-size: 0.8125rem;
+        color: var(--sf-text-muted);
+        text-align: left;
+    }
+}

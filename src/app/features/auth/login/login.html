@@ -1,0 +1,54 @@
+<sf-auth-layout>
+    <div class="sf-auth-card">
+
+        <h1 class="sf-auth-card__title">Welcome back</h1>
+        <p class="sf-auth-card__subtitle">Log in to your SnapFace account</p>
+
+        @if (errorMessage()) {
+        <p-message severity="error" [text]="errorMessage()!" styleClass="w-full sf-auth-card__message" />
+        }
+
+        <sf-google-signin-button (success)="onGoogleSuccess($event)" (error)="onGoogleError($event)" />
+
+        <div class="sf-auth-card__divider"><span>or</span></div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="sf-auth-card__form" novalidate>
+
+            <div class="sf-field">
+                <label for="login-email">Email</label>
+                <input pInputText id="login-email" type="email" formControlName="email" placeholder="you@example.com"
+                    autocomplete="email" />
+                @if (email.invalid && email.touched) {
+                <small class="sf-field__error">
+                    @if (email.errors?.['required']) { Email is required. }
+                    @if (email.errors?.['email']) { Enter a valid email address. }
+                </small>
+                }
+            </div>
+
+            <div class="sf-field">
+                <label for="login-password">Password</label>
+                <p-password id="login-password" formControlName="password" [feedback]="false" [toggleMask]="true"
+                    placeholder="Enter your password" styleClass="w-full" autocomplete="current-password" />
+                @if (password.invalid && password.touched) {
+                <small class="sf-field__error">Password is required.</small>
+                }
+            </div>
+
+            <div class="sf-auth-card__row">
+                <label class="sf-auth-card__remember">
+                    <p-checkbox formControlName="remember" [binary]="true" />
+                    Remember me
+                </label>
+                <a routerLink="/forgot-password" class="sf-auth-card__link">Forgot password?</a>
+            </div>
+
+            <p-button label="Log In" type="submit" [loading]="loading()" styleClass="sf-full-btn" size="large" />
+        </form>
+
+        <p class="sf-auth-card__footer">
+            Don't have an account? <a routerLink="/register">Sign up</a>
+        </p>
+
+    </div>
+</sf-auth-layout>

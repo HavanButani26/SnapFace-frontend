@@ -1,0 +1,55 @@
+<footer class="sf-footer">
+    <div class="sf-container">
+
+        <div class="sf-footer__top">
+
+            <div class="sf-footer__brand-col">
+                <a routerLink="/" class="sf-footer__brand">
+                    <div class="sf-footer__logo-mark"><i class="pi pi-bolt"></i></div>
+                    <span class="sf-footer__brand-text">
+                        Snap<span class="sf-gradient-text">Face</span>
+                    </span>
+                </a>
+                <p class="sf-footer__brand-desc">
+                    AI-powered event media platform that helps photographers and guests connect through memories that
+                    last forever.
+                </p>
+                <div class="sf-footer__socials">
+                    @for (social of socialLinks; track social.icon) {
+                    <a [href]="social.url" target="_blank" rel="noopener" class="sf-footer__social-link"
+                        [attr.aria-label]="social.icon">
+                        <i class="pi" [class]="'pi ' + social.icon"></i>
+                    </a>
+                    }
+                </div>
+            </div>
+
+            @for (col of columns; track col.title) {
+            <div class="sf-footer__col">
+                <h4 class="sf-footer__col-title">{{ col.title }}</h4>
+                <ul class="sf-footer__col-list">
+                    @for (link of col.links; track link.label) {
+                    <li><a [routerLink]="link.path">{{ link.label }}</a></li>
+                    }
+                </ul>
+            </div>
+            }
+
+            <div class="sf-footer__newsletter-col">
+                <h4 class="sf-footer__col-title">Stay updated</h4>
+                <p class="sf-footer__newsletter-desc">Get the latest updates and offers.</p>
+                <form class="sf-footer__newsletter-form" (ngSubmit)="submitNewsletter()">
+                    <input type="email" pInputText placeholder="Enter your email" [(ngModel)]="newsletterEmail"
+                        name="newsletterEmail" required />
+                    <p-button icon="pi pi-send" type="submit" [rounded]="true" />
+                </form>
+            </div>
+
+        </div>
+
+        <div class="sf-footer__bottom">
+            <span>&copy; {{ currentYear }} SnapFace. All rights reserved.</span>
+        </div>
+
+    </div>
+</footer>

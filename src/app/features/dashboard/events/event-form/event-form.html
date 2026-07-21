@@ -1,0 +1,91 @@
+<div class="sf-event-form">
+
+    <a routerLink="/dashboard/events" class="sf-event-form__back">
+        <i class="pi pi-arrow-left"></i> Back to Events
+    </a>
+
+    <h1>{{ isEditMode() ? 'Edit Event' : 'New Event' }}</h1>
+
+    @if (loading()) {
+    <p class="sf-event-form__loading">Loading event...</p>
+    } @else {
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="sf-card sf-event-form__card" novalidate>
+
+        <div class="sf-form-field">
+            <label for="ev-name">Event Name *</label>
+            <input pInputText id="ev-name" formControlName="name" placeholder="Sarah & James Wedding" />
+            @if (name.invalid && name.touched) {
+            <small class="sf-form-field__error">Event name is required.</small>
+            }
+        </div>
+
+        <div class="sf-event-form__row">
+            <div class="sf-form-field">
+                <label for="ev-date">Event Date *</label>
+                <p-datepicker id="ev-date" formControlName="event_date" dateFormat="dd M yy" [showIcon]="true"
+                    styleClass="w-full" appendTo="body" />
+                @if (event_date.invalid && event_date.touched) {
+                <small class="sf-form-field__error">Event date is required.</small>
+                }
+            </div>
+
+            <div class="sf-form-field">
+                <label for="ev-status">Status</label>
+                <p-select id="ev-status" formControlName="status" [options]="statusOptions" optionLabel="label"
+                    optionValue="value" styleClass="w-full" appendTo="body" />
+            </div>
+        </div>
+
+        <div class="sf-event-form__row">
+            <div class="sf-form-field">
+                <label for="ev-venue">Venue</label>
+                <input pInputText id="ev-venue" formControlName="venue" placeholder="The Grand Hall" />
+            </div>
+
+            <div class="sf-form-field">
+                <label for="ev-client">Client / Couple Name</label>
+                <input pInputText id="ev-client" formControlName="client_name" placeholder="Sarah & James" />
+            </div>
+        </div>
+
+        <div class="sf-form-field">
+            <label for="ev-guests">Expected Guest Count</label>
+            <p-inputnumber id="ev-guests" formControlName="expected_guest_count" [min]="0" styleClass="w-full" />
+        </div>
+
+        <div class="sf-form-field">
+            <label for="ev-desc">Description</label>
+            <textarea pTextarea id="ev-desc" formControlName="description" rows="3"
+                placeholder="Any notes about this event..."></textarea>
+        </div>
+
+        <div class="sf-event-form__password-section">
+            <label class="sf-event-form__password-toggle">
+                <input type="checkbox" class="sf-checkbox" [checked]="protectWithPassword()"
+                    (change)="protectWithPassword.set($any($event.target).checked)" />
+                <span>Protect guest access with a password</span>
+            </label>
+
+            @if (protectWithPassword()) {
+            <div class="sf-form-field">
+                <label for="ev-password">{{ currentlyProtected() ? 'New password (leave blank to keep current)' :
+                    'Password' }}</label>
+                <p-password id="ev-password" formControlName="guest_password" [feedback]="false" [toggleMask]="true"
+                    styleClass="w-full" />
+            </div>
+            } @else if (currentlyProtected()) {
+            <p class="sf-form-field__hint">Saving will remove the current password — guests will be able to access this
+                event without one.</p>
+            }
+        </div>
+
+        <div class="sf-event-form__actions">
+            <p-button label="Cancel" [outlined]="true" routerLink="/dashboard/events" type="button" />
+            <p-button [label]="isEditMode() ? 'Save Changes' : 'Create Event'" type="submit" [loading]="saving()" />
+        </div>
+
+    </form>
+    }
+
+</div>

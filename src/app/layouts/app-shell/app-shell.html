@@ -1,0 +1,107 @@
+<div class="sf-shell">
+
+    <!-- Desktop sidebar -->
+    <aside class="sf-shell__sidebar">
+        <a routerLink="/dashboard" class="sf-shell__brand">
+            <img [src]="themeService.mode() === 'dark' ? 'assets/logos/logo-navbar-dark.svg' : 'assets/logos/logo-navbar-light.svg'"
+                alt="SnapFace" class="sf-shell__logo-img" />
+        </a>
+
+        <nav class="sf-shell__nav">
+            @for (item of navItems; track item.path) {
+            <a [routerLink]="item.path" class="sf-shell__nav-link" [class.sf-shell__nav-link--active]="isActive(item)">
+                <i class="pi" [class]="'pi ' + item.icon"></i>
+                <span>{{ item.label }}</span>
+            </a>
+            }
+        </nav>
+
+        <button type="button" class="sf-shell__theme-toggle" (click)="toggleTheme()">
+            <i class="pi" [class.pi-sun]="themeService.mode() === 'dark'"
+                [class.pi-moon]="themeService.mode() === 'light'"></i>
+            <span>{{ themeService.mode() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
+        </button>
+    </aside>
+
+    <!-- Mobile sidebar drawer -->
+    <p-drawer [(visible)]="mobileSidebarOpen" position="left" [closable]="false" styleClass="sf-shell-drawer">
+        <ng-template #header>
+            <img [src]="themeService.mode() === 'dark' ? 'assets/logos/logo-navbar-dark.svg' : 'assets/logos/logo-navbar-light.svg'"
+                alt="SnapFace" class="sf-shell__logo-img sf-shell__logo-img--drawer" />
+        </ng-template>
+
+        <nav class="sf-shell__nav">
+            @for (item of navItems; track item.path) {
+            <a [routerLink]="item.path" class="sf-shell__nav-link" [class.sf-shell__nav-link--active]="isActive(item)"
+                (click)="mobileSidebarOpen.set(false)">
+                <i class="pi" [class]="'pi ' + item.icon"></i>
+                <span>{{ item.label }}</span>
+            </a>
+            }
+        </nav>
+
+        <button type="button" class="sf-shell__theme-toggle" (click)="toggleTheme()">
+            <i class="pi" [class.pi-sun]="themeService.mode() === 'dark'"
+                [class.pi-moon]="themeService.mode() === 'light'"></i>
+            <span>{{ themeService.mode() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
+        </button>
+    </p-drawer>
+
+    <!-- Main column -->
+    <div class="sf-shell__main">
+
+        <header class="sf-shell__topbar">
+            <button type="button" class="sf-shell__hamburger" (click)="toggleMobileSidebar()" aria-label="Open menu">
+                <i class="pi pi-bars"></i>
+            </button>
+
+            <span class="sf-shell__topbar-spacer"></span>
+
+            <button type="button" class="sf-shell__icon-btn" aria-label="Notifications">
+                <i class="pi pi-bell"></i>
+            </button>
+
+            <!-- Custom user dropdown — plain HTML/CSS, no third-party overlay component -->
+            <div class="sf-user-dropdown">
+                <button type="button" class="sf-shell__user-btn" (click)="toggleUserMenu()">
+                    <span class="sf-shell__avatar">
+                        @if (authService.currentUser()?.profile_photo) {
+                        <img [src]="authService.currentUser()!.profile_photo" alt="" />
+                        } @else {
+                        {{ userInitials }}
+                        }
+                    </span>
+                    <span class="sf-shell__username">{{ authService.currentUser()?.username }}</span>
+                    <i class="pi pi-chevron-down"></i>
+                </button>
+
+                @if (userMenuOpen()) {
+                <div class="sf-user-dropdown__panel">
+                    @for (item of userMenuActions; track item.label; let last = $last) {
+                    <button type="button" class="sf-user-dropdown__item"
+                        [class.sf-user-dropdown__item--danger]="item.label === 'Log out'"
+                        (click)="runUserMenuAction(item)">
+                        <i class="pi" [class]="'pi ' + item.icon"></i>
+                        <span>{{ item.label }}</span>
+                    </button>
+                    @if (!last && item.label === 'View public site') {
+                    <div class="sf-user-dropdown__separator"></div>
+                    }
+                    }
+                </div>
+                }
+            </div>
+        </header>
+
+        <main class="sf-shell__content">
+            <router-outlet />
+        </main>
+
+    </div>
+
+    <!-- Invisible backdrop: closes the user dropdown on outside click -->
+    @if (userMenuOpen()) {
+    <div class="sf-dropdown-backdrop" (click)="userMenuOpen.set(false)"></div>
+    }
+
+</div>

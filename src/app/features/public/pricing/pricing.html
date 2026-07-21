@@ -1,0 +1,64 @@
+<div class="sf-pricing">
+
+    <div class="sf-pricing__header">
+        <h1>Simple, Transparent Pricing</h1>
+        <p>Storage-based plans that scale with how much you shoot — no hidden limits, no surprises.</p>
+    </div>
+
+    @if (loading()) {
+    <p class="sf-pricing__loading">Loading plans...</p>
+    } @else {
+    <div class="sf-pricing__grid">
+        @for (plan of plans(); track plan.id) {
+        <div class="sf-plan-card" [class.sf-plan-card--current]="isCurrentPlan(plan)">
+
+            @if (isCurrentPlan(plan)) {
+            <span class="sf-plan-card__badge">Current Plan</span>
+            }
+
+            <h2>{{ plan.name }}</h2>
+            <p class="sf-plan-card__description">{{ plan.description }}</p>
+
+            <div class="sf-plan-card__price">
+                <span class="sf-plan-card__price-amount">${{ plan.monthly_price }}</span>
+                <span class="sf-plan-card__price-period">/ month</span>
+            </div>
+
+            <ul class="sf-plan-card__limits">
+                <li><i class="pi pi-cloud"></i> {{ getLimitValue(plan, 'STORAGE_GB') }} GB storage</li>
+                <li><i class="pi pi-calendar"></i> {{ getLimitValue(plan, 'MAX_EVENTS') }} events / month</li>
+                <li><i class="pi pi-users"></i> {{ getLimitValue(plan, 'MONTHLY_AI_JOBS') }} AI jobs / month</li>
+                <li><i class="pi pi-video"></i> {{ getLimitValue(plan, 'MONTHLY_REEL_EXPORTS') }} reel exports / month
+                </li>
+            </ul>
+
+            @if (plan.plan_features.length > 0) {
+            <ul class="sf-plan-card__features">
+                @for (f of plan.plan_features; track f.feature) {
+                <li><i class="pi pi-check"></i> {{ f.feature_display }}</li>
+                }
+            </ul>
+            }
+
+            <button type="button" class="sf-plan-card__btn"
+                [disabled]="isCurrentPlan(plan) || checkingOutPlanId() === plan.id" (click)="choosePlan(plan)">
+                @if (checkingOutPlanId() === plan.id) {
+                Processing...
+                } @else if (isCurrentPlan(plan)) {
+                Current Plan
+                } @else {
+                Choose {{ plan.name }}
+                }
+            </button>
+
+        </div>
+        }
+    </div>
+
+    <p class="sf-pricing__note">
+        Need more of one specific thing without a full upgrade? Add-ons for extra storage, events, or individual
+        features are available from your account settings.
+    </p>
+    }
+
+</div>
