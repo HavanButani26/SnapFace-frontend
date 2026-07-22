@@ -21,12 +21,10 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface CloudinarySignature {
-  signature: string;
-  timestamp: number;
-  api_key: string;
-  cloud_name: string;
-  folder: string;
+export interface AvatarUploadUrlResponse {
+  upload_url: string;
+  object_key: string;
+  public_url: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -150,8 +148,11 @@ export class AuthService {
     });
   }
 
-  /** Same signed direct-to-Cloudinary pattern as event photos, scoped to this user's avatar folder. */
-  getAvatarUploadSignature(): Observable<CloudinarySignature> {
-    return this.http.post<CloudinarySignature>(`${this.apiUrl}/auth/avatar-upload-signature/`, {});
+  /** R2 presigned upload for the profile avatar. Returns the public URL
+   *  immediately since the object key (and therefore URL) is deterministic. */
+  getAvatarUploadUrl(contentType: string): Observable<AvatarUploadUrlResponse> {
+    return this.http.post<AvatarUploadUrlResponse>(`${this.apiUrl}/auth/avatar-upload-url/`, {
+      content_type: contentType,
+    });
   }
 }

@@ -129,7 +129,7 @@ export class AvatarPicker {
     'Nova',
     'Oscar',
     'Ruby',
-  ].map((seed) => `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&mouth=smile`);
+  ].map((seed) => `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}`);
 
   setTab(tab: TabName): void {
     this.activeTab.set(tab);
@@ -179,12 +179,12 @@ export class AvatarPicker {
   }
 
   private uploadAndSave(file: File): void {
-    this.authService.getAvatarUploadSignature().subscribe({
-      next: (sig) => {
+    this.authService.getAvatarUploadUrl(file.type || 'image/jpeg').subscribe({
+      next: (result) => {
         this.photoService
-          .uploadDirectToCloudinary(file, sig, () => {})
-          .then((result) => {
-            this.authService.updateProfile({ profile_photo: result.secure_url }).subscribe({
+          .uploadDirectToR2(file, result.upload_url, () => {})
+          .then(() => {
+            this.authService.updateProfile({ profile_photo: result.public_url }).subscribe({
               next: () => {
                 this.saving.set(false);
                 this.toastService.success('Profile photo updated.');

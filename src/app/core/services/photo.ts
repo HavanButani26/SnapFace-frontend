@@ -14,24 +14,24 @@ export interface Photo {
   height: number | null;
   file_size: number | null;
   status: string;
+  taken_at: string | null;
+  camera_make: string;
+  camera_model: string;
+  gps_latitude: number | null;
+  gps_longitude: number | null;
+  tags: { label: string; confidence: number }[];
   created_at: string;
 }
 
-interface UploadSignature {
-  signature: string;
-  timestamp: number;
-  api_key: string;
-  cloud_name: string;
-  folder: string;
+export interface UploadUrlResponse {
+  upload_url: string;
+  object_key: string;
 }
 
-export interface CloudinaryUploadResult {
-  public_id: string;
-  secure_url: string;
-  width: number;
-  height: number;
-  bytes: number;
+export interface PhotoMetadata {
+  object_key: string;
   original_filename: string;
+  file_size: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,40 +44,40 @@ export class PhotoService {
     return this.http.get<Photo[]>(`${this.apiUrl}/event/${eventId}/`);
   }
 
-  getUploadSignature(eventId: number, fileSize: number): Observable<UploadSignature> {
-    return this.http.post<UploadSignature>(`${this.apiUrl}/event/${eventId}/upload-signature/`, {
+  getUploadUrl(
+    eventId: number,
+    filename: string,
+    contentType: string,
+    fileSize: number,
+  ): Observable<UploadUrlResponse> {
+    return this.http.post<UploadUrlResponse>(`${this.apiUrl}/event/${eventId}/upload-url/`, {
+      filename,
+      content_type: contentType,
       file_size: fileSize,
     });
   }
 
-  saveMetadata(eventId: number, result: CloudinaryUploadResult): Observable<Photo> {
-    return this.http.post<Photo>(`${this.apiUrl}/event/${eventId}/create/`, result);
+  saveMetadata(eventId: number, metadata: PhotoMetadata): Observable<Photo> {
+    return this.http.post<Photo>(`${this.apiUrl}/event/${eventId}/create/`, metadata);
   }
 
   /**
-   * Uploads a file DIRECTLY to Cloudinary from the browser — our Django
-   * server never sees the file bytes at all. Deliberately uses
-   * XMLHttpRequest instead of Angular's HttpClient for two reasons:
-   * 1. HttpClient would run our auth interceptor and attach our own
-   *    Bearer token to a third-party request, which is wrong here.
-   * 2. The fetch API still doesn't expose upload progress events;
-   *    XHR does, which is what powers the per-file progress bars.
+   * Uploads directly to R2 using a presigned PUT URL. Unlike the old
+   * Cloudinary flow, this sends the RAW FILE as the request body, not
+   * FormData/multipart. Still uses XMLHttpRequest rather than
+   * HttpClient — avoids our auth interceptor attaching a Bearer token
+   * to a third-party request, and gives real upload progress events
+   * (fetch still doesn't expose these).
    */
-  uploadDirectToCloudinary(
+  uploadDirectToR2(
     file: File,
-    sig: UploadSignature,
+    uploadUrl: string,
     onProgress: (percent: number) => void,
-  ): Promise<CloudinaryUploadResult> {
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('api_key', sig.api_key);
-      formData.append('timestamp', String(sig.timestamp));
-      formData.append('signature', sig.signature);
-      formData.append('folder', sig.folder);
-
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${sig.cloud_name}/image/upload`);
+      xhr.open('PUT', uploadUrl);
+      xhr.setRequestHeader('Content-Type', file.type || 'image/jpeg');
 
       xhr.upload.addEventListener('progress', (e) => {
         if (e.lengthComputable) {
@@ -87,32 +87,14 @@ export class PhotoService {
 
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          const result = JSON.parse(xhr.responseText);
-          resolve({
-            public_id: result.public_id,
-            secure_url: result.secure_url,
-            width: result.width,
-            height: result.height,
-            bytes: result.bytes,
-            original_filename: file.name,
-          });
+          resolve();
         } else {
-          // Surface Cloudinary's actual message (e.g. "File size too
-          // large. Got 10489521. Maximum is 10485760.") instead of a
-          // generic failure — much more useful for the user to see why.
-          let message = 'Cloudinary upload failed.';
-          try {
-            const errorBody = JSON.parse(xhr.responseText);
-            message = errorBody?.error?.message || message;
-          } catch {
-            // response wasn't JSON — keep the generic message
-          }
-          reject(new Error(message));
+          reject(new Error(`Upload failed (status ${xhr.status}). Please try again.`));
         }
       };
 
-      xhr.onerror = () => reject(new Error('Cloudinary upload failed — check your connection.'));
-      xhr.send(formData);
+      xhr.onerror = () => reject(new Error('Upload failed — check your connection.'));
+      xhr.send(file);
     });
   }
 }

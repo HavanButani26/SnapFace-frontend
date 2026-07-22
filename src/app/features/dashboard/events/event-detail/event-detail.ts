@@ -292,32 +292,40 @@ export class EventDetail implements OnInit, OnDestroy {
   }
 
   private uploadOne(eventId: number, staged: StagedFile): void {
-    this.photoService.getUploadSignature(eventId, staged.file.size).subscribe({
-      next: (sig) => {
-        this.photoService
-          .uploadDirectToCloudinary(staged.file, sig, () => {
-            // Individual byte-progress isn't surfaced in the compact
-            // summary UI — only completed-file count is shown, per
-            // request. (Kept as a no-op hook if we want it back later.)
-          })
-          .then((result) => {
-            this.photoService.saveMetadata(eventId, result).subscribe({
-              next: (photo) => {
-                this.photos.update((list) => [photo, ...list]);
-                this.onFileUploadSettled(staged);
-                this.fetchUsage(); // keep the remaining-storage preview live
-              },
-              error: () => this.onFileUploadFailed(staged, 'Failed to save photo details.'),
-            });
-          })
-          .catch((err: Error) => this.onFileUploadFailed(staged, err.message));
-      },
-      error: (err) => {
-        // A 402 here means the backend's pre-flight storage check
-        // rejected this specific file — surface its real message.
-        this.onFileUploadFailed(staged, err?.error?.error ?? 'Could not start the upload.');
-      },
-    });
+    this.photoService
+      .getUploadUrl(eventId, staged.file.name, staged.file.type, staged.file.size)
+      .subscribe({
+        next: (result) => {
+          this.photoService
+            .uploadDirectToR2(staged.file, result.upload_url, () => {
+              // Individual byte-progress isn't surfaced in the compact
+              // summary UI — only completed-file count is shown, per
+              // request. (Kept as a no-op hook if we want it back later.)
+            })
+            .then(() => {
+              this.photoService
+                .saveMetadata(eventId, {
+                  object_key: result.object_key,
+                  original_filename: staged.file.name,
+                  file_size: staged.file.size,
+                })
+                .subscribe({
+                  next: (photo) => {
+                    this.photos.update((list) => [photo, ...list]);
+                    this.onFileUploadSettled(staged);
+                    this.fetchUsage(); // keep the remaining-storage preview live
+                  },
+                  error: () => this.onFileUploadFailed(staged, 'Failed to save photo details.'),
+                });
+            })
+            .catch((err: Error) => this.onFileUploadFailed(staged, err.message));
+        },
+        error: (err) => {
+          // A 402 here means the backend's pre-flight storage check
+          // rejected this specific file — surface its real message.
+          this.onFileUploadFailed(staged, err?.error?.error ?? 'Could not start the upload.');
+        },
+      });
   }
 
   private onFileUploadSettled(staged: StagedFile): void {
