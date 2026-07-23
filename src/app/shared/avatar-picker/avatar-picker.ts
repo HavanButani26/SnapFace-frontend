@@ -137,7 +137,10 @@ export class AvatarPicker {
 
   selectPreset(url: string): void {
     this.saving.set(true);
-    this.authService.updateProfile({ profile_photo: url }).subscribe({
+    // Explicitly clear profile_photo_key — otherwise a previously
+    // uploaded photo's key would still take priority in the backend's
+    // resolution logic, and this new preset would never actually show.
+    this.authService.updateProfile({ profile_photo: url, profile_photo_key: '' }).subscribe({
       next: () => {
         this.saving.set(false);
         this.toastService.success('Profile photo updated.');
@@ -184,17 +187,19 @@ export class AvatarPicker {
         this.photoService
           .uploadDirectToR2(file, result.upload_url, () => {})
           .then(() => {
-            this.authService.updateProfile({ profile_photo: result.public_url }).subscribe({
-              next: () => {
-                this.saving.set(false);
-                this.toastService.success('Profile photo updated.');
-                this.close.emit();
-              },
-              error: () => {
-                this.saving.set(false);
-                this.toastService.error('Could not save your new photo.');
-              },
-            });
+            this.authService
+              .updateProfile({ profile_photo: '', profile_photo_key: result.object_key })
+              .subscribe({
+                next: () => {
+                  this.saving.set(false);
+                  this.toastService.success('Profile photo updated.');
+                  this.close.emit();
+                },
+                error: () => {
+                  this.saving.set(false);
+                  this.toastService.error('Could not save your new photo.');
+                },
+              });
           })
           .catch(() => {
             this.saving.set(false);

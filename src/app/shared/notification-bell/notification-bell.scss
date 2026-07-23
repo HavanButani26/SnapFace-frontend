@@ -1,0 +1,173 @@
+.sf-notif-bell {
+    position: relative;
+}
+
+.sf-notif-bell__trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: var(--sf-bg-alt);
+    color: var(--sf-text-muted);
+    cursor: pointer;
+
+    i {
+        font-size: 1rem;
+    }
+
+    &:hover {
+        color: var(--sf-text);
+    }
+}
+
+.sf-notif-bell__badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-notif-bell__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 200;
+    width: 340px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; // clips children (incl. the inner scrollbar) to the rounded corners
+    background: var(--sf-bg-alt);
+    border: 1px solid var(--sf-card-border);
+    border-radius: var(--sf-radius-md);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+}
+
+.sf-notif-bell__scroll-area {
+    overflow-y: auto; // the scrollbar lives HERE, inside the clipped boundary — never touches the rounded corners
+    flex: 1;
+    min-height: 0; // required for flex children to actually shrink/scroll instead of overflowing
+}
+
+.sf-notif-bell__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--sf-card-border);
+    flex-shrink: 0;
+    background: var(--sf-bg-alt);
+
+    h4 {
+        font-size: 0.9rem;
+    }
+}
+
+.sf-notif-bell__mark-all {
+    background: none;
+    border: none;
+    color: var(--sf-cyan);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.sf-notif-bell__empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--sf-text-muted);
+    font-size: 0.875rem;
+}
+
+.sf-notif-bell__list {
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-notif-bell__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid var(--sf-card-border);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+        background: var(--sf-gradient);
+
+        .sf-notif-bell__item-title,
+        .sf-notif-bell__item-message,
+        .sf-notif-bell__item-time {
+            color: #ffffff;
+        }
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.sf-notif-bell__item-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-top: 0.4rem;
+    flex-shrink: 0;
+    background: transparent;
+
+    &--visible {
+        background: var(--sf-cyan);
+    }
+}
+
+.sf-notif-bell__item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.sf-notif-bell__item-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--sf-text);
+}
+
+.sf-notif-bell__item-message {
+    font-size: 0.8rem;
+    color: var(--sf-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.sf-notif-bell__item-time {
+    font-size: 0.7rem;
+    color: var(--sf-text-subtle);
+    margin-top: 0.1rem;
+}

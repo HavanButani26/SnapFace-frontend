@@ -6,6 +6,7 @@ import { ThemeService } from '../../core/services/theme';
 import { AuthService } from '../../core/services/auth';
 import { ConfirmService } from '../../core/services/confirm';
 import { ToastService } from '../../core/services/toast';
+import { NotificationBell } from '../../shared/notification-bell/notification-bell';
 
 interface NavItem {
   label: string;
@@ -22,7 +23,7 @@ interface UserMenuAction {
 @Component({
   selector: 'sf-app-shell',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, DrawerModule],
+  imports: [RouterLink, RouterOutlet, DrawerModule, NotificationBell],
   templateUrl: './app-shell.html',
   styleUrl: './app-shell.scss',
 })

@@ -24,7 +24,6 @@ export interface AuthResponse {
 export interface AvatarUploadUrlResponse {
   upload_url: string;
   object_key: string;
-  public_url: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,10 +34,7 @@ export class AuthService {
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => !!this.currentUserSignal());
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-  ) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   private loadUserFromStorage(): User | null {
     const raw = localStorage.getItem('sf_user');
@@ -46,28 +42,25 @@ export class AuthService {
   }
 
   register(data: {
-    email: string;
-    username: string;
-    password: string;
-    password2: string;
-    role: string;
+    email: string; username: string; password: string;
+    password2: string; role: string;
   }): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/auth/register/`, data);
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/auth/login/`, { email, password })
-      .pipe(tap((res) => this.setSession(res)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login/`, { email, password }).pipe(
+      tap((res) => this.setSession(res))
+    );
   }
 
   googleLogin(idToken: string, role?: string): Observable<AuthResponse> {
     const body: { id_token: string; role?: string } = { id_token: idToken };
     if (role) body.role = role;
 
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/auth/google/`, body)
-      .pipe(tap((res) => this.setSession(res)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/google/`, body).pipe(
+      tap((res) => this.setSession(res))
+    );
   }
 
   private setSession(res: AuthResponse) {
@@ -99,9 +92,9 @@ export class AuthService {
 
   refreshToken(): Observable<{ access: string }> {
     const refresh = localStorage.getItem('sf_refresh');
-    return this.http
-      .post<{ access: string }>(`${this.apiUrl}/auth/login/refresh/`, { refresh })
-      .pipe(tap((res) => localStorage.setItem('sf_access', res.access)));
+    return this.http.post<{ access: string }>(`${this.apiUrl}/auth/login/refresh/`, { refresh }).pipe(
+      tap((res) => localStorage.setItem('sf_access', res.access))
+    );
   }
 
   forgotPassword(email: string): Observable<{ message: string }> {
@@ -110,15 +103,13 @@ export class AuthService {
 
   resetPassword(uid: string, token: string, password: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
-      `${this.apiUrl}/auth/reset-password/${uid}/${token}/`,
-      { password },
+      `${this.apiUrl}/auth/reset-password/${uid}/${token}/`, { password }
     );
   }
 
   verifyEmail(uid: string, token: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
-      `${this.apiUrl}/auth/verify-email/${uid}/${token}/`,
-      {},
+      `${this.apiUrl}/auth/verify-email/${uid}/${token}/`, {}
     );
   }
 
@@ -126,9 +117,7 @@ export class AuthService {
     return localStorage.getItem('sf_access');
   }
 
-  updateProfile(
-    data: Partial<Pick<User, 'username' | 'mobile' | 'theme_preference' | 'profile_photo'>>,
-  ): Observable<User> {
+  updateProfile(data: Partial<Pick<User, 'username' | 'mobile' | 'theme_preference' | 'profile_photo'>> & { profile_photo_key?: string }): Observable<User> {
     return this.http.patch<User>(`${this.apiUrl}/auth/me/`, data).pipe(
       tap((updatedUser) => {
         const current = this.currentUserSignal();
@@ -137,7 +126,7 @@ export class AuthService {
           this.currentUserSignal.set(merged);
           localStorage.setItem('sf_user', JSON.stringify(merged));
         }
-      }),
+      })
     );
   }
 
