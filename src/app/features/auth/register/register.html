@@ -1,6 +1,18 @@
 <sf-auth-layout>
     <div class="sf-auth-card sf-auth-card--wide">
 
+        @if (registered()) {
+
+        <h1 class="sf-auth-card__title">Check your email</h1>
+        <p class="sf-auth-card__subtitle">
+            We've sent a verification link to your email address. Click it to activate your account, then log in.
+        </p>
+        <p class="sf-auth-card__footer">
+            <a routerLink="/login">Back to login</a>
+        </p>
+
+        } @else {
+
         <h1 class="sf-auth-card__title">Create your account</h1>
         <p class="sf-auth-card__subtitle">Join SnapFace and start delivering photos instantly</p>
 
@@ -11,7 +23,19 @@
         <p-message severity="success" [text]="successMessage()!" styleClass="w-full sf-auth-card__message" />
         }
 
-        <sf-google-signin-button [role]="'photographer'" (success)="onGoogleSuccess($event)"
+        <div class="sf-role-toggle">
+            <button type="button" class="sf-role-toggle__btn"
+                [class.sf-role-toggle__btn--active]="selectedRole() === 'photographer'"
+                (click)="setRole('photographer')">
+                I'm a Photographer
+            </button>
+            <button type="button" class="sf-role-toggle__btn"
+                [class.sf-role-toggle__btn--active]="selectedRole() === 'guest'" (click)="setRole('guest')">
+                I'm a Guest
+            </button>
+        </div>
+
+        <sf-google-signin-button [role]="selectedRole()" (success)="onGoogleSuccess($event)"
             (error)="onGoogleError($event)" />
 
         <div class="sf-auth-card__divider"><span>or</span></div>
@@ -79,6 +103,8 @@
         <p class="sf-auth-card__footer">
             Already have an account? <a routerLink="/login">Log in</a>
         </p>
+
+        }
 
     </div>
 </sf-auth-layout>

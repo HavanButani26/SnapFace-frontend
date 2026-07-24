@@ -6,7 +6,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -43,13 +43,13 @@ export class Register {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
-
-  // Register is photographer-only — guests never self-register here.
-  private readonly fixedRole = 'photographer';
+  registered = signal(false);
+  selectedRole = signal<'photographer' | 'guest'>('photographer');
 
   form = this.fb.nonNullable.group(
     {
@@ -78,6 +78,10 @@ export class Register {
     return this.form.controls.agreeTerms;
   }
 
+  setRole(role: 'photographer' | 'guest'): void {
+    this.selectedRole.set(role);
+  }
+
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -89,22 +93,22 @@ export class Register {
     this.successMessage.set(null);
 
     const { username, email, password, password2 } = this.form.getRawValue();
-
     this.authService
       .register({
-        email,
         username,
+        email,
         password,
         password2,
-        role: this.fixedRole,
+        role: this.selectedRole(),
       })
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.successMessage.set(
-            'Account created! Check your email to verify your account before logging in.',
-          );
-          this.form.reset({ agreeTerms: false });
+          // Email verification is still required after registration —
+          // the returnUrl (if present) carries through automatically,
+          // since it stays in the URL and LOGIN reads it after they
+          // verify and log in for the first time.
+          this.registered.set(true);
         },
         error: (err) => {
           this.loading.set(false);
@@ -123,8 +127,15 @@ export class Register {
     return Array.isArray(firstVal) ? String(firstVal[0]) : String(firstVal);
   }
 
-  onGoogleSuccess(_user: User): void {
-    this.router.navigate(['/dashboard']);
+  onGoogleSuccess(user: User): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+    } else if (user.role === 'guest') {
+      this.router.navigate(['/guest/my-photos']);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   onGoogleError(message: string): void {

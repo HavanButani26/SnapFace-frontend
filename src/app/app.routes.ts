@@ -125,6 +125,35 @@ export const routes: Routes = [
     ],
   },
   {
+    // Top-level sibling of 'dashboard', NOT nested inside it — this is
+    // the fix. Real URL is now /guest/my-photos, matching what
+    // login.ts/register.ts/guest-event.ts already expect.
+    path: 'guest',
+    canActivate: [authGuard],
+    loadComponent: () => import('./layouts/guest-shell/guest-shell').then((m) => m.GuestShell),
+    children: [
+      {
+        path: 'my-photos',
+        loadComponent: () =>
+          import('./features/guest/guest-my-photos/guest-my-photos').then(
+            (m) => m.GuestMyPhotos,
+          ),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/guest/guest-settings/guest-settings').then((m) => m.GuestSettings),
+      },
+      {
+        path: 'settings/change-password',
+        loadComponent: () =>
+          import('./features/dashboard/settings/change-password/change-password').then(
+            (m) => m.ChangePassword,
+          ),
+      },
+    ],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

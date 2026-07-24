@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -31,6 +31,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -59,19 +60,31 @@ export class Login {
     const { email, password } = this.form.getRawValue();
 
     this.authService.login(email, password).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigate(['/dashboard']);
+      next: (res) => {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        if (returnUrl) {
+          this.router.navigateByUrl(returnUrl);
+        } else if (res.user.role === 'guest') {
+          this.router.navigate(['/guest/my-photos']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
-        this.loading.set(false);
         this.errorMessage.set(err?.error?.detail ?? 'Invalid email or password. Please try again.');
       },
     });
   }
 
-  onGoogleSuccess(_user: User): void {
-    this.router.navigate(['/dashboard']);
+  onGoogleSuccess(user: User): void {
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (returnUrl) {
+      this.router.navigateByUrl(returnUrl);
+    } else if (user.role === 'guest') {
+      this.router.navigate(['/guest/my-photos']);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   onGoogleError(message: string): void {

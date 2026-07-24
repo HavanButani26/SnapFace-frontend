@@ -6,15 +6,24 @@ export const homeRedirectGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Explicit escape hatch: "View public site" (from the dashboard's user
-  // menu) links here with ?preview=1 so a logged-in user can intentionally
-  // see the marketing homepage without losing their session — normal
-  // visits to '/' (no query param) still redirect as before.
-  const isPreview = route.queryParamMap.get('preview') === '1';
-
-  if (authService.isLoggedIn() && !isPreview) {
-    router.navigate(['/dashboard']);
-    return false;
+  // Escape hatch for "View public site" -- a logged-in user explicitly
+  // asked to preview the marketing site, so don't redirect them away.
+  if (route.queryParamMap.get('preview') === '1') {
+    return true;
   }
-  return true;
+
+  if (!authService.isLoggedIn()) {
+    return true;
+  }
+
+  // Logged in -- WHERE to send them depends on role now that guest
+  // accounts exist (this guard used to assume every logged-in user
+  // was a photographer, since guests didn't have accounts yet).
+  const role = authService.currentUser()?.role;
+  if (role === 'guest') {
+    router.navigate(['/guest/my-photos']);
+  } else {
+    router.navigate(['/dashboard']);
+  }
+  return false;
 };

@@ -1,20 +1,23 @@
 import { Component, inject, signal, ElementRef, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../core/services/auth';
 import { GuestService, GuestEventInfo } from '../../../core/services/guest-event';
 import { Photo } from '../../../core/services/photo';
 
-type ViewState = 'loading' | 'password' | 'ready' | 'error';
+type ViewState = 'loading' | 'needs-login' | 'password' | 'ready' | 'error';
 
 @Component({
   selector: 'sf-guest-event',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './guest-event.html',
   styleUrl: './guest-event.scss',
 })
 export class GuestEvent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private authService = inject(AuthService);
   private guestService = inject(GuestService);
 
   slug = '';
@@ -23,10 +26,15 @@ export class GuestEvent implements OnInit, OnDestroy {
   event = signal<GuestEventInfo | null>(null);
   guestToken = signal<string | null>(null);
 
-  // Password gate
+  // Password gate (event-specific, independent of account login)
   passwordInput = signal('');
   passwordError = signal<string | null>(null);
   verifying = signal(false);
+
+  // Biometric consent — shown only if the backend tells us this
+  // account hasn't given it yet (checked once ever, not per-search).
+  needsConsent = signal(false);
+  consentChecked = signal(false);
 
   // Selfie + results
   selfiePreviewUrl = signal<string | null>(null);
@@ -49,6 +57,7 @@ export class GuestEvent implements OnInit, OnDestroy {
 
   // Zip download
   downloadingZip = signal(false);
+  downloadingPhotoId = signal<number | null>(null);
 
   ngOnInit(): void {
     this.slug = this.route.snapshot.paramMap.get('slug') ?? '';
@@ -56,17 +65,15 @@ export class GuestEvent implements OnInit, OnDestroy {
     this.guestService.getEventInfo(this.slug).subscribe({
       next: (info) => {
         this.event.set(info);
-        if (info.is_password_protected) {
-          const stored = this.guestService.getStoredToken(this.slug);
-          if (stored) {
-            this.guestToken.set(stored);
-            this.state.set('ready');
-          } else {
-            this.state.set('password');
-          }
-        } else {
-          this.state.set('ready');
+
+        // Login is checked FIRST — shown as a deliberate landing state
+        // with event context visible, not a blind involuntary redirect.
+        if (!this.authService.isLoggedIn()) {
+          this.state.set('needs-login');
+          return;
         }
+
+        this.proceedPastLogin(info);
       },
       error: () => {
         this.state.set('error');
@@ -77,6 +84,28 @@ export class GuestEvent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopCameraStream();
+  }
+
+  private proceedPastLogin(info: GuestEventInfo): void {
+    if (info.is_password_protected) {
+      const stored = this.guestService.getStoredToken(this.slug);
+      if (stored) {
+        this.guestToken.set(stored);
+        this.state.set('ready');
+      } else {
+        this.state.set('password');
+      }
+    } else {
+      this.state.set('ready');
+    }
+  }
+
+  goToLogin(): void {
+    this.router.navigate(['/login'], { queryParams: { returnUrl: `/e/${this.slug}` } });
+  }
+
+  goToRegister(): void {
+    this.router.navigate(['/register'], { queryParams: { returnUrl: `/e/${this.slug}` } });
   }
 
   submitPassword(): void {
@@ -114,6 +143,7 @@ export class GuestEvent implements OnInit, OnDestroy {
     this.searchDone.set(false);
     this.results.set([]);
     this.searchError.set(null);
+    this.needsConsent.set(false);
   }
 
   clearSelfie(): void {
@@ -123,12 +153,11 @@ export class GuestEvent implements OnInit, OnDestroy {
     this.searchDone.set(false);
     this.results.set([]);
     this.searchError.set(null);
+    this.needsConsent.set(false);
   }
 
   // ------------------------------------------------------------------
-  // Live camera capture path (works on both mobile and desktop, unlike
-  // the file input's capture="user" hint which is mobile-only and
-  // inconsistently supported)
+  // Live camera capture path
   // ------------------------------------------------------------------
   async openCamera(): Promise<void> {
     this.cameraError.set(null);
@@ -175,15 +204,26 @@ export class GuestEvent implements OnInit, OnDestroy {
   }
 
   // ------------------------------------------------------------------
-  // Search
+  // Search — handles the consent_required response specially
   // ------------------------------------------------------------------
   findMyPhotos(): void {
+    if (!this.selfieFile) return;
+    this.runSearch(this.consentChecked());
+  }
+
+  confirmConsentAndSearch(): void {
+    this.consentChecked.set(true);
+    this.needsConsent.set(false);
+    this.runSearch(true);
+  }
+
+  private runSearch(consent: boolean): void {
     if (!this.selfieFile) return;
     this.searching.set(true);
     this.searchError.set(null);
 
     this.guestService
-      .searchSelfie(this.slug, this.selfieFile, this.guestToken() ?? undefined)
+      .searchSelfie(this.slug, this.selfieFile, consent, this.guestToken() ?? undefined)
       .subscribe({
         next: (result) => {
           this.searching.set(false);
@@ -192,6 +232,12 @@ export class GuestEvent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.searching.set(false);
+
+          if (err?.error?.error === 'consent_required') {
+            this.needsConsent.set(true);
+            return;
+          }
+
           this.searchDone.set(true);
           this.searchError.set(
             err?.error?.error ?? 'Something went wrong while searching. Please try again.',
@@ -203,15 +249,6 @@ export class GuestEvent implements OnInit, OnDestroy {
   // ------------------------------------------------------------------
   // Downloads
   // ------------------------------------------------------------------
-  downloadingPhotoId = signal<number | null>(null);
-
-  /**
-   * The HTML `download` attribute is ignored by browsers for
-   * cross-origin links (Cloudinary is a different origin from ours) —
-   * that's exactly why clicking used to just open/navigate to the
-   * image instead of downloading it. Fetching the bytes first and
-   * downloading from a same-origin blob: URL fixes this properly.
-   */
   async downloadOne(photo: Photo): Promise<void> {
     this.downloadingPhotoId.set(photo.id);
     try {
@@ -226,8 +263,6 @@ export class GuestEvent implements OnInit, OnDestroy {
 
       URL.revokeObjectURL(url);
     } catch {
-      // Fallback so the guest can still get the photo somehow (e.g. via
-      // long-press/save) rather than nothing happening at all.
       window.open(photo.image_url, '_blank');
     } finally {
       this.downloadingPhotoId.set(null);

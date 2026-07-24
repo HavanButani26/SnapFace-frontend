@@ -21,6 +21,13 @@
 
     <div class="sf-guest__hero" [style.background-image]="ev.cover_photo ? 'url(' + ev.cover_photo + ')' : ''">
         <div class="sf-guest__hero-overlay"></div>
+
+        @if (state() !== 'needs-login') {
+        <a routerLink="/guest/my-photos" class="sf-guest__my-photos-link">
+            <i class="pi pi-images"></i> My Photos
+        </a>
+        }
+
         <div class="sf-guest__hero-content">
             <h1>{{ ev.name }}</h1>
             <p><i class="pi pi-calendar"></i> {{ ev.event_date | date:'mediumDate' }} @if (ev.venue) { &middot; {{
@@ -29,6 +36,20 @@
     </div>
 
     <div class="sf-guest__body">
+
+        @if (state() === 'needs-login') {
+        <div class="sf-guest-card">
+            <i class="pi pi-user sf-guest-card__icon"></i>
+            <h2>Sign in to find your photos</h2>
+            <p>Create a free account (or log in) to search this event and keep access to your photos.</p>
+
+            <div class="sf-guest-card__option-row">
+                <button type="button" class="sf-guest-card__btn" (click)="goToLogin()">Log In</button>
+                <button type="button" class="sf-guest-card__btn-outline" (click)="goToRegister()">Create
+                    Account</button>
+            </div>
+        </div>
+        }
 
         @if (state() === 'password') {
         <div class="sf-guest-card">
@@ -110,6 +131,21 @@
                 <button type="button" class="sf-guest-card__btn" (click)="capturePhoto(videoEl)">
                     <i class="pi pi-camera"></i> Capture
                 </button>
+            </div>
+        </div>
+
+        } @else if (needsConsent()) {
+        <div class="sf-guest-card">
+            <i class="pi pi-shield sf-guest-card__icon"></i>
+            <h2>Before we search</h2>
+            <p>
+                We'll process your photo using face-detection technology to find your matches in this event.
+                This happens once — we won't ask again on future searches.
+            </p>
+            <div class="sf-guest-card__preview-actions">
+                <button type="button" class="sf-guest-card__btn-outline" (click)="clearSelfie()">Cancel</button>
+                <button type="button" class="sf-guest-card__btn" (click)="confirmConsentAndSearch()">I Agree,
+                    Continue</button>
             </div>
         </div>
 

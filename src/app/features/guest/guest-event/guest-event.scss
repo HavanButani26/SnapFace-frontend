@@ -45,6 +45,31 @@
     align-items: flex-end;
 }
 
+.sf-guest__my-photos-link {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    &:hover {
+        background: linear-gradient(135deg, #00D4FF 0%, #7B3FF2 100%);
+    }
+
+    i {
+        font-size: 0.75rem;
+    }
+}
+
 .sf-guest__hero-overlay {
     position: absolute;
     inset: 0;

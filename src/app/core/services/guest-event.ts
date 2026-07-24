@@ -17,42 +17,63 @@ export interface GuestSearchResult {
   photos: Photo[];
 }
 
+export interface GuestPhotosByEvent {
+  event_name: string;
+  event_slug: string;
+  photos: Photo[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class GuestService {
-  private readonly apiUrl = `${environment.apiUrl}/guest/events`;
+  private readonly apiUrl = `${environment.apiUrl}/guest`;
 
   constructor(private http: HttpClient) {}
 
   getEventInfo(slug: string): Observable<GuestEventInfo> {
-    return this.http.get<GuestEventInfo>(`${this.apiUrl}/${slug}/`);
+    return this.http.get<GuestEventInfo>(`${this.apiUrl}/events/${slug}/`);
   }
 
   verifyPassword(slug: string, password: string): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/${slug}/verify-password/`, {
+    return this.http.post<{ token: string }>(`${this.apiUrl}/events/${slug}/verify-password/`, {
       password,
     });
   }
 
-  searchSelfie(slug: string, selfie: File, token?: string): Observable<GuestSearchResult> {
+  /**
+   * Auth is handled automatically by the existing HTTP interceptor
+   * (attaches the guest's own Bearer token, since search now requires
+   * login). `token` here is the SEPARATE event-password token, if that
+   * event is also password-protected — an independent gate from login.
+   */
+  searchSelfie(
+    slug: string,
+    selfie: File,
+    consent: boolean,
+    token?: string,
+  ): Observable<GuestSearchResult> {
     const formData = new FormData();
     formData.append('selfie', selfie);
+    formData.append('consent', String(consent));
     if (token) formData.append('token', token);
 
-    return this.http.post<GuestSearchResult>(`${this.apiUrl}/${slug}/search/`, formData);
+    return this.http.post<GuestSearchResult>(`${this.apiUrl}/events/${slug}/search/`, formData);
   }
 
-  /**
-   * Server-side ZIP — the browser only ever downloads one finished
-   * archive; Django does the fetching-from-Cloudinary and zipping.
-   */
   downloadZip(slug: string, photoIds: number[], token?: string): Observable<Blob> {
     return this.http.post(
-      `${this.apiUrl}/${slug}/download-zip/`,
+      `${this.apiUrl}/events/${slug}/download-zip/`,
       { photo_ids: photoIds, token },
-      { responseType: 'blob' }
+      { responseType: 'blob' },
     );
   }
 
+  getMyPhotos(): Observable<{ events: GuestPhotosByEvent[] }> {
+    return this.http.get<{ events: GuestPhotosByEvent[] }>(`${this.apiUrl}/my-photos/`);
+  }
+
+  // sessionStorage helpers for the EVENT PASSWORD token specifically —
+  // separate concern from account login, which uses the normal
+  // localStorage-based JWT session via AuthService.
   getStoredToken(slug: string): string | null {
     return sessionStorage.getItem(`sf_guest_token_${slug}`);
   }

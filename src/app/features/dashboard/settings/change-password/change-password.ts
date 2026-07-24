@@ -52,6 +52,11 @@ export class ChangePassword {
   get confirmPassword() {
     return this.form.controls.confirmPassword;
   }
+  get settingsBackUrl(): string {
+    return this.authService.currentUser()?.role === 'guest'
+      ? '/guest/settings'
+      : '/dashboard/settings';
+  }
 
   submit(): void {
     if (this.form.invalid) {
